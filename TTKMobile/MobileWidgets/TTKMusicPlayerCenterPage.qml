@@ -1,6 +1,6 @@
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
@@ -114,18 +114,23 @@ Item {
 
     onXChanged: {
         ttkMusicPlayerCenterSettingPage.visible = false;
+        ttkMusicPlayerCenterLrcPage.visible = false;
         ttkMusicSongDownloadPage.visible = false;
         ttkMusicSongSharedPage.visible = false;
     }
 
     TTKMusicPlayerCenterSettingPage {
         id: ttkMusicPlayerCenterSettingPage
-        text: TTK_APP.mediaName( TTK_APP.mediaName() );
+        text: TTK_APP.mediaName();
+    }
+
+    TTKMusicPlayerCenterLrcPage {
+        id: ttkMusicPlayerCenterLrcPage
     }
 
     TTKMusicSongDownloadPage {
         id: ttkMusicSongDownloadPage
-        text: TTK_APP.mediaName( TTK_APP.mediaName() );
+        text: TTK_APP.mediaName();
     }
 
     TTKMusicSongSharedPage {
@@ -167,7 +172,7 @@ Item {
                     Layout.preferredWidth: ttkGlobal.dpWidth(50)
                     Layout.preferredHeight: ttkGlobal.dpHeight(50)
                     anchors.left: parent.left
-                    onPressed: {
+                    onClicked: {
                         ttkOutStackView.pop();
                     }
                 }
@@ -189,7 +194,7 @@ Item {
                     Layout.preferredWidth: ttkGlobal.dpWidth(50)
                     Layout.preferredHeight: ttkGlobal.dpHeight(50)
                     anchors.right: parent.right
-                    onPressed: {
+                    onClicked: {
                         ttkMusicPlayerCenterSettingPage.visible = true;
                     }
                 }
@@ -263,7 +268,7 @@ Item {
                         Layout.preferredHeight: ttkGlobal.dpHeight(30)
                         source: TTK_PLAYER.getMusicEnhanced() === 0 ? "qrc:/image/player_btn_dts_off"
                                                                     : "qrc:/image/player_btn_dts_on"
-                        onPressed: {
+                        onClicked: {
                             ttkOutStackView.push("qrc:/MobileWidgets/TTKMusicDTSEffectPage.qml");
                         }
                     }
@@ -291,7 +296,7 @@ Item {
                                 from: 0
                                 to: 360
                                 direction: RotationAnimation.Clockwise
-                                duration: 16000
+                                duration: 40000
                                 loops: Animation.Infinite
                             }
                         }
@@ -300,7 +305,7 @@ Item {
                     TTKMarquee {
                         id: musicPlayerShowLrc
                         Layout.alignment: Qt.AlignCenter
-                        width: ttkMusicPlayerCenter.width
+                        width: ttkMusicPlayerCenter.width - ttkGlobal.dpWidth(50)
                         height: ttkGlobal.dpHeight(70)
                         textColor: ttkTheme.color_green
                         color: ttkTheme.color_alpha_lv0
@@ -318,7 +323,7 @@ Item {
                 TTKMusicLyricPage {
                     id: musicLrcShow
                     anchors.centerIn: parent
-                    width: parent.width
+                    width: parent.width - ttkGlobal.dpHeight(50)
                     height: parent.height - ttkGlobal.dpHeight(40)
                     color: ttkTheme.color_alpha_lv0
 
@@ -345,8 +350,8 @@ Item {
                     width: ttkGlobal.dpWidth(40)
                     height: ttkGlobal.dpHeight(40)
                     source: "qrc:/image/player_btn_lrc"
-                    onPressed: {
-                        console.log("clicked");
+                    onClicked: {
+                        ttkMusicPlayerCenterLrcPage.visible = true;
                     }
                 }
             }
@@ -422,7 +427,7 @@ Item {
                             MouseArea {
                                 id: musicTimeSliderArea
                                 anchors.fill: parent
-                                onPressed: {
+                                onClicked: {
                                     var value = TTK_PLAYER.duration()/musicTimeSlider.width*mouse.x;
                                     musicTimeSlider.value = value;
                                     TTK_PLAYER.setPosition(value);
@@ -463,7 +468,7 @@ Item {
                             Layout.preferredWidth: ttkGlobal.dpWidth(120)
                             Layout.preferredHeight: ttkGlobal.dpHeight(100)
                             Layout.alignment: Qt.AlignCenter
-                            onPressed: {
+                            onClicked: {
                                 TTK_APP.playPrevious();
                                 if(TTK_PLAYER.state() === 1) {
                                     changedPlayState();
@@ -476,7 +481,7 @@ Item {
                             Layout.preferredWidth: ttkGlobal.dpWidth(120)
                             Layout.preferredHeight: ttkGlobal.dpHeight(100)
                             Layout.alignment: Qt.AlignCenter
-                            onPressed: {
+                            onClicked: {
                                 if(TTK_PLAYER.state() === 1) {
                                     playerPlayButton.source = "qrc:/image/player_btn_play_normal";
                                     TTK_PLAYER.pause();
@@ -497,7 +502,7 @@ Item {
                             Layout.preferredWidth: ttkGlobal.dpWidth(120)
                             Layout.preferredHeight: ttkGlobal.dpHeight(100)
                             Layout.alignment: Qt.AlignCenter
-                            onPressed: {
+                            onClicked: {
                                 TTK_APP.playNext();
                                 if(TTK_PLAYER.state() === 1) {
                                     changedPlayState();
@@ -528,7 +533,7 @@ Item {
                             Layout.preferredWidth: ttkGlobal.dpWidth(70)
                             Layout.preferredHeight: ttkGlobal.dpHeight(70)
                             Layout.alignment: Qt.AlignCenter
-                            onPressed: {
+                            onClicked: {
                                 TTK_APP.importLovestMusicSongs();
                                 ttkFlyInOutBox.start();
                                 if(TTK_APP.checkLovestMusicSong()) {
@@ -547,7 +552,7 @@ Item {
                             Layout.preferredWidth: ttkGlobal.dpWidth(70)
                             Layout.preferredHeight: ttkGlobal.dpHeight(70)
                             Layout.alignment: Qt.AlignCenter
-                            onPressed: {
+                            onClicked: {
                                 ttkFlyInOutBox.start();
                                 ++playMode;
                                 if(playMode >= 5) {
@@ -563,7 +568,7 @@ Item {
                             Layout.preferredWidth: ttkGlobal.dpWidth(70)
                             Layout.preferredHeight: ttkGlobal.dpHeight(70)
                             Layout.alignment: Qt.AlignCenter
-                            onPressed: {
+                            onClicked: {
                                 ttkMusicSongDownloadPage.visible = true;
                             }
                         }
@@ -573,7 +578,7 @@ Item {
                             Layout.preferredWidth: ttkGlobal.dpWidth(70)
                             Layout.preferredHeight: ttkGlobal.dpHeight(70)
                             Layout.alignment: Qt.AlignCenter
-                            onPressed: {
+                            onClicked: {
                                 ttkMusicSongSharedPage.visible = true;
                             }
                         }
@@ -583,7 +588,7 @@ Item {
                             Layout.preferredWidth: ttkGlobal.dpWidth(70)
                             Layout.preferredHeight: ttkGlobal.dpHeight(70)
                             Layout.alignment: Qt.AlignCenter
-                            onPressed: {
+                            onClicked: {
 
                             }
                         }

@@ -3,7 +3,7 @@
 
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
@@ -13,8 +13,9 @@
 #include "musicglobaldefine.h"
 
 class MusicSettingWidget;
-class MusicDownloadStatusLabel;
+class MusicDownloadStatusObject;
 class MusicLrcContainerForDesktop;
+class MusicLrcContainerForWallpaper;
 
 namespace Ui {
     class MusicApplication;
@@ -38,6 +39,7 @@ public:
         SimilarWidget,          ///*insert similar found widget*/
         AlbumWidget,            ///*insert album found widget*/
         ArtistWidget,           ///*insert artist found widget*/
+        PlaylistWidget,         ///*insert playlist found widget*/
         IndentifyWidget,        ///*insert indentify songs widget*/
         KuiSheWidget            ///*insert kugou kuishe widget*/
     };
@@ -118,6 +120,11 @@ public:
      * Show setting widget.
      */
 
+    void resizeWindow();
+    /*!
+     * Resize window bound by widgte resize called.
+     */
+
 Q_SIGNALS:
     void updateBgThemeDownload();
     /*!
@@ -126,14 +133,6 @@ Q_SIGNALS:
     void updateBackgroundTheme();
     /*!
      * Current background transparent changed.
-     */
-    void desktopLrcClosed();
-    /*!
-     * Set desktop lrc close state.
-     */
-    void lockDesktopLrc(bool lock);
-    /*!
-     * Lock or not current desktop lrc emit.
      */
 
 public Q_SLOTS:
@@ -156,6 +155,10 @@ public Q_SLOTS:
     void musicArtistFound(const QString &text);
     /*!
      * Music artist function that by string.
+     */
+    void musicPlaylistFound();
+    /*!
+     * Music playlist function that by string.
      */
     void musicLoadSongIndexWidget();
     /*!
@@ -201,6 +204,10 @@ public Q_SLOTS:
     /*!
      * Lrc display all button clicked.
      */
+    void musicContainerForWallpaperClicked();
+    /*!
+     * Lrc desktop wallpaper button clicked.
+     */
 
 protected:
     void musicButtonStyleClear(bool fore);
@@ -212,7 +219,8 @@ protected:
     Ui::MusicApplication *m_ui;
     MusicSettingWidget *m_setting;
     MusicLrcContainerForDesktop *m_musicLrcForDesktop;
-    MusicDownloadStatusLabel *m_downloadStatusLabel;
+    MusicLrcContainerForWallpaper *m_musicLrcForWallpaper;
+    MusicDownloadStatusObject *m_downloadStatusLabel;
 
     static MusicRightAreaWidget *m_instance;
 };

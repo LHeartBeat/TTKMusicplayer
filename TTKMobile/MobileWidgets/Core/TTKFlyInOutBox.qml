@@ -1,6 +1,6 @@
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
@@ -75,10 +75,11 @@ Rectangle {
         duration: 400
         easing.type: Easing.InOutQuad
     }
-    Timer{
-        id: timer;
-        interval: 800;
-        repeat: false;
+
+    Timer {
+        id: timer
+        interval: 800
+        repeat: false
 
         onTriggered: {
             flyOutAnimation.start();

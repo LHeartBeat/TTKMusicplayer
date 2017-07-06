@@ -3,7 +3,7 @@
 
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
@@ -76,10 +76,39 @@ public:
      * Read Equalizer Value Config.
      */
 
+    inline int readShowLrcColor() const
+    { return readXmlAttributeByTagNameValue("lrcColor").toInt(); }
+    /*!
+     * Read Show Lrc Color Config.
+     */
+    inline int readShowLrcSize() const
+    { return readXmlAttributeByTagNameValue("lrcSize").toInt(); }
+    /*!
+     * Read Show Lrc Size Config.
+     */
+    inline int readShowLrcType() const
+    { return readXmlAttributeByTagNameValue("lrcType").toInt(); }
+    /*!
+     * Read Show Lrc Type Config.
+     */
+    inline QString readShowLrcFgColor() const
+    { return readXmlAttributeByTagNameValue("lrcFgColor");}
+    /*!
+     * Read Show Lrc Fg Color Config.
+     */
+
+    bool readNeedUpdateConfig();
+    /*!
+     * Read need update config.
+     */
     void readSystemLastPlayIndexConfig(QStringList &key) const;
    /*!
     * Read System Last Play Index Config.
     */
+    void readOtherLoadConfig() const;
+    /*!
+     * Read Other Load Config.
+     */
 
 protected:
     MusicSongs readMusicFilePath(const QDomNode &node) const;

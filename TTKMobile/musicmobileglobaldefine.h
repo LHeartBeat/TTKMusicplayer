@@ -3,7 +3,7 @@
 
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
@@ -20,7 +20,7 @@
 #ifdef MUSIC_EXPORT
 #  define MUSIC_MOBILE_EXPORT Q_DECL_EXPORT
 #else
-#  define MUSIC_MOBILE_EXPORT Q_DECL_IMPORT
+#  define MUSIC_MOBILE_IMPORT Q_DECL_IMPORT
 #endif
 
 #endif // MUSICMOBILEGLOBALDEFINE_H

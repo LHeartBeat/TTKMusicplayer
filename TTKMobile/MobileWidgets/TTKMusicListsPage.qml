@@ -1,6 +1,6 @@
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
@@ -28,6 +28,7 @@ Item {
             playlistModel.append(info);
         }
         itemListView.currentIndex = TTK_APP.getCurrentIndex();
+        updateItemListView();
     }
 
     onXChanged: {
@@ -40,6 +41,17 @@ Item {
     function removeItemFromList() {
         playlistModel.remove(functionClickedIndex);
         TTK_APP.removeMusicSongs(functionClickedIndex);
+        updateItemListView();
+    }
+
+    function updateItemListView() {
+        if(playlistModel.count === 0) {
+            noCreateItem.visible = true;
+            itemListView.visible = false;
+        }else {
+            noCreateItem.visible = false;
+            itemListView.visible = true;
+        }
     }
 
     Connections {
@@ -56,6 +68,8 @@ Item {
                     };
                     playlistModel.append(info);
                 }
+                itemListView.currentIndex = TTK_APP.getCurrentIndex();
+                updateItemListView();
             }
         }
         onCurrentIndexChanged: {
@@ -63,6 +77,7 @@ Item {
         }
         onRemoveItemFromPlayerCenter: {
             playlistModel.remove(index);
+            updateItemListView();
         }
     }
 
@@ -94,7 +109,7 @@ Item {
                     Layout.preferredWidth: ttkGlobal.dpWidth(50)
                     Layout.preferredHeight: ttkGlobal.dpHeight(50)
                     anchors.left: parent.left
-                    onPressed: {
+                    onClicked: {
                         ttkMainStackView.pop();
                     }
                 }
@@ -115,7 +130,7 @@ Item {
                     Layout.preferredWidth: ttkGlobal.dpWidth(50)
                     Layout.preferredHeight: ttkGlobal.dpHeight(50)
                     anchors.right: parent.right
-                    onPressed: {
+                    onClicked: {
                         ttkMusicListsMorePage.visible = true;
                     }
                 }
@@ -128,10 +143,26 @@ Item {
             height: ttkMainStackView.height - mainMenubar.height
             color: ttkTheme.color_white
 
+            TTKMainFunctionItem {
+                id: noCreateItem
+                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
+                source: "qrc:/image/ic_start_recognize_bottom"
+                mainTitle: qsTr("空空如也")
+                subTitle: qsTr("搜索更多的歌曲吧")
+                mainTitleSize: ttkGlobal.dpHeight(150)/8
+            }
+
             ListView {
                 id: itemListView
                 anchors.fill: parent
                 clip: true
+
+                onFlickingVerticallyChanged: {
+                    locationButton.visible = true;
+                    timer.stop();
+                    timer.start();
+                }
 
                 delegate: Component {
                     Rectangle {
@@ -142,6 +173,10 @@ Item {
 
                         MouseArea {
                             anchors.fill: parent
+                            onPressAndHold: {
+                                ttkGlobal.list_module_index = ttkTheme.music_normal_list;
+                                ttkOutStackView.push("qrc:/MobileWidgets/TTKMusicListsManagerPage.qml");
+                            }
                             onClicked: {
                                 itemListView.currentIndex = index;
                                 TTK_APP.setCurrentIndex(ttkTheme.music_normal_list, index);
@@ -167,7 +202,7 @@ Item {
                         Text {
                             id: titleArea
                             text: title
-                            width: ttkMusicListsPage.width - iconArea.width - ttkGlobal.dpHeight(60)
+                            width: ttkMusicListsPage.width - iconArea.width - ttkGlobal.dpWidth(60)
                             anchors {
                                 top: parent.top
                                 topMargin: ttkGlobal.dpHeight(10)
@@ -203,7 +238,7 @@ Item {
                                 rightMargin: ttkGlobal.dpHeight(20)
                             }
                             source: "qrc:/image/ic_playlist_more_normal"
-                            onPressed: {
+                            onClicked: {
                                 functionClickedIndex = index;
                                 ttkMusicSongSettingPage.songName = title;
                                 ttkMusicSongSettingPage.singerName = artist;
@@ -232,6 +267,49 @@ Item {
 
                 model: ListModel {
                     id: playlistModel
+                }
+            }
+        }
+
+        Timer {
+            id: timer
+            interval: 3000
+            repeat: false
+
+            onTriggered: {
+                disappearAnimation.start();
+            }
+        }
+
+        PropertyAnimation {
+            id: disappearAnimation
+            target: locationButton
+            property: "opacity"
+            duration: 1000
+            from: 1
+            to: 0
+            onStopped: {
+                locationButton.visible = false;
+                locationButton.opacity = 1;
+            }
+        }
+
+        TTKImageButton {
+            id: locationButton
+            visible: false
+            source: "qrc:/image/anchor_in_cell_point"
+            Layout.preferredWidth: ttkGlobal.dpWidth(50)
+            Layout.preferredHeight: ttkGlobal.dpHeight(50)
+            anchors {
+                right: parent.right
+                rightMargin: ttkGlobal.dpWidth(50)
+                bottom: parent.bottom
+                bottomMargin: ttkGlobal.dpHeight(10)
+            }
+            onClicked: {
+                var delta = ttkGlobal.dpHeight(70)*itemListView.currentIndex;
+                if(delta >= 0) {
+                    itemListView.contentY = delta;
                 }
             }
         }

@@ -1,10 +1,6 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2014-08-08T23:19:41
-#
 # =================================================
 # * This file is part of the TTK Music Player project
-# * Copyright (c) 2014 - 2016 Greedysky Studio
+# * Copyright (c) 2015 - 2017 Greedysky Studio
 # * All rights reserved!
 # * Redistribution and use of the source code or any derivative
 # * works are strictly forbiden.
@@ -15,9 +11,13 @@ TEMPLATE = lib
 include(../TTKVersion.pri)
 unix:VERSION += $$TTKMusicPlayer
 
-win32:TARGET = ../../bin/$$TTKMusicPlayer/MusicUi
-unix:TARGET = ../lib/$$TTKMusicPlayer/MusicUi
+win32:TARGET = ../../bin/$$TTKMusicPlayer/TTKUi
+unix:TARGET = ../lib/$$TTKMusicPlayer/TTKUi
 
 RESOURCES += \
     MusicPlayer.qrc \
     MusicThirdParty.qrc
+    
+win32{
+    RC_FILE = TTKQrc.rc
+}

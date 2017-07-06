@@ -1,6 +1,6 @@
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
@@ -17,13 +17,14 @@ Rectangle {
     property alias source: image.source
     property alias mainTitle: mainTitle.text
     property alias subTitle: subTitle.text
+    property int mainTitleSize: height/8
 
-    signal pressed
+    signal clicked
 
     MouseArea {
         anchors.fill: parent
         onClicked: {
-            ttkMainFunctionItem.pressed();
+            ttkMainFunctionItem.clicked();
         }
     }
 
@@ -48,7 +49,7 @@ Rectangle {
             Layout.alignment: Qt.AlignCenter
             verticalAlignment: Text.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
-            font.pixelSize: parent.height/8
+            font.pixelSize: mainTitleSize
         }
 
         Text {

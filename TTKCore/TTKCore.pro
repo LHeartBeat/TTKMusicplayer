@@ -1,10 +1,6 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2014-08-08T23:19:41
-#
 # =================================================
 # * This file is part of the TTK Music Player project
-# * Copyright (c) 2014 - 2016 Greedysky Studio
+# * Copyright (c) 2015 - 2017 Greedysky Studio
 # * All rights reserved!
 # * Redistribution and use of the source code or any derivative
 # * works are strictly forbiden.
@@ -16,8 +12,8 @@ CONFIG += TTK_BUILD_LIB
 include(../TTKMusicPlayer.pri)
 unix:VERSION += $$TTKMusicPlayer
 
-win32:TARGET = ../../bin/$$TTKMusicPlayer/MusicCore
-unix:TARGET = ../lib/$$TTKMusicPlayer/MusicCore
+win32:TARGET = ../../bin/$$TTKMusicPlayer/TTKCore
+unix:TARGET = ../lib/$$TTKMusicPlayer/TTKCore
 
 INCLUDEPATH += $$PWD
 
@@ -37,3 +33,7 @@ HEADERS  += \
     musicrightareawidget.h \
     musicbottomareawidget.h \
     musicapplicationobject.h
+    
+win32{
+    RC_FILE = TTKCore.rc
+}

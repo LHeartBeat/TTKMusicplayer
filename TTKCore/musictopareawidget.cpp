@@ -10,9 +10,14 @@
 #include "musicremotewidgetforcircle.h"
 #include "musicremotewidgetforsimplestyle.h"
 #include "musicremotewidgetforcomplexstyle.h"
+#include "musicremotewidgetforstrip.h"
+#include "musicremotewidgetforripples.h"
 #include "musicuiobject.h"
 #include "musictinyuiobject.h"
 #include "musicfunctionuiobject.h"
+#include "musicdownloaddiscoverlistthread.h"
+#include "musicdownloadqueryfactory.h"
+#include "musiccounterpvdownloadthread.h"
 
 MusicTopAreaWidget *MusicTopAreaWidget::m_instance = nullptr;
 
@@ -21,10 +26,18 @@ MusicTopAreaWidget::MusicTopAreaWidget(QWidget *parent)
 {
     m_instance = this;
     m_musicUserWindow = new MusicUserWindow(this);
+
+    m_pictureCarouselTimer.setInterval(10*MT_S2MS);
     connect(&m_pictureCarouselTimer, SIGNAL(timeout()), SLOT(musicBackgroundChanged()));
     connect(M_BACKGROUND_PTR, SIGNAL(userSelectIndexChanged()), SLOT(musicBackgroundChanged()));
+    ///////////////////////////////////////////////////////
+    MusicDownLoadDiscoverListThread *discover = M_DOWNLOAD_QUERY_PTR->getDiscoverListThread(this);
+    connect(discover, SIGNAL(downLoadDataChanged(QString)), SLOT(musicSearchTopListInfoFinished(QString)));
+    discover->startToSearch();
 
-    m_currentPlayStatus = true;
+    m_counterPVThread = new MusicCounterPVDownloadThread(this);
+    m_counterPVThread->startToDownload();
+    ///////////////////////////////////////////////////////
     m_listAlpha = 40;
 }
 
@@ -33,6 +46,7 @@ MusicTopAreaWidget::~MusicTopAreaWidget()
     delete m_musicUserWindow;
     delete m_musicbgskin;
     delete m_musicRemoteWidget;
+    delete m_counterPVThread;
 }
 
 QString MusicTopAreaWidget::getClassName()
@@ -48,10 +62,11 @@ MusicTopAreaWidget *MusicTopAreaWidget::instance()
 void MusicTopAreaWidget::setupUi(Ui::MusicApplication* ui)
 {
     m_ui = ui;
+    ui->background->setNoAnimation(true);
     ui->userWindow->addWidget(m_musicUserWindow);
+
     ui->musicSongSearchLine->initWidget(MusicApplication::instance());
     ui->musicSongSearchLine->setStyleSheet(MusicUIObject::MLineEditStyle03);
-    ui->musicSongSearchLine->setText(tr("please input search text"));
 
     ui->musicSearchButton->setCursor(QCursor(Qt::PointingHandCursor));
     ui->musicSearchButton->setStyleSheet(MusicUIObject::MKGTinyBtnMainSearch);
@@ -94,6 +109,11 @@ void MusicTopAreaWidget::setParameters(const QString &skin, int alpha, int alpha
     musicBgTransparentChanged(m_alpha = alpha);
 }
 
+QPixmap MusicTopAreaWidget::getBgSkinPixmap() const
+{
+    return m_ui->background->getRendererPixmap();
+}
+
 int MusicTopAreaWidget::getListBgSkinAlpha()
 {
     if(m_musicbgskin)
@@ -115,7 +135,6 @@ void MusicTopAreaWidget::setTimerStop()
 
 void MusicTopAreaWidget::showPlayStatus(bool status)
 {
-    m_currentPlayStatus = status;
     if(m_musicRemoteWidget)
     {
         m_musicRemoteWidget->showPlayStatus(status);
@@ -136,6 +155,11 @@ void MusicTopAreaWidget::setVolumeValue(int value) const
     {
         m_musicRemoteWidget->setVolumeValue(value);
     }
+}
+
+void MusicTopAreaWidget::musicSearchTopListInfoFinished(const QString &data)
+{
+    m_ui->musicSongSearchLine->setPlaceholderText( data );
 }
 
 void MusicTopAreaWidget::musicShowSkinChangedWindow()
@@ -197,13 +221,18 @@ void MusicTopAreaWidget::musicBackgroundChanged()
     !art_path.isEmpty() ? drawWindowBackgroundRectString(art_path) : drawWindowBackgroundRect();
 }
 
+void MusicTopAreaWidget::musicBackgroundSliderStateChanged(bool state)
+{
+    m_ui->background->setNoAnimation(state);
+}
+
 void MusicTopAreaWidget::musicBgThemeDownloadFinished()
 {
     if(m_ui->surfaceStackedWidget->currentIndex() == 1  &&
        m_ui->musiclrccontainerforinline->artBackgroundIsShow() )
     {
         musicBackgroundChanged();
-        m_pictureCarouselTimer.start(5*MT_S2MS);
+        m_pictureCarouselTimer.start();
     }
     else
     {
@@ -219,7 +248,7 @@ void MusicTopAreaWidget::musicBgThemeChangedByResize()
         m_pictureCarouselTimer.stop();
         QString art_path = M_BACKGROUND_PTR->getArtPhotoPathByIndex();
         !art_path.isEmpty() ? drawWindowBackgroundRectString(art_path) : drawWindowBackgroundRect();
-        m_pictureCarouselTimer.start(5*MT_S2MS);
+        m_pictureCarouselTimer.start();
     }
     else
     {
@@ -299,6 +328,28 @@ void MusicTopAreaWidget::musicComplexStyleRemote()
     createRemoteWidget();
 }
 
+void MusicTopAreaWidget::musicStripRemote()
+{
+    if(m_musicRemoteWidget)
+    {
+        delete m_musicRemoteWidget;
+    }
+    m_musicRemoteWidget = new MusicRemoteWidgetForStrip;
+    m_musicRemoteWidget->setLabelText(m_ui->showCurrentSong->text());
+    createRemoteWidget();
+}
+
+void MusicTopAreaWidget::musicRipplesRemote()
+{
+    if(m_musicRemoteWidget)
+    {
+        delete m_musicRemoteWidget;
+    }
+    m_musicRemoteWidget = new MusicRemoteWidgetForRipples;
+    m_musicRemoteWidget->setLabelText(m_ui->showCurrentSong->text());
+    createRemoteWidget();
+}
+
 void MusicTopAreaWidget::musicDeleteRemote()
 {
     delete m_musicRemoteWidget;
@@ -307,20 +358,35 @@ void MusicTopAreaWidget::musicDeleteRemote()
 
 void MusicTopAreaWidget::musicRemoteTypeChanged(QAction *type)
 {
-    MusicRemoteWidget *tempRemote = m_musicRemoteWidget;
-    m_musicRemoteWidget = nullptr;
-    if(type->text() == tr("CircleRemote")) musicCircleRemote();
-    else if(type->text() == tr("DiamondRemote")) musicDiamondRemote();
-    else if(type->text() == tr("SquareRemote")) musicSquareRemote();
-    else if(type->text() == tr("RectangleRemote")) musicRectangleRemote();
-    else if(type->text() == tr("SimpleStyleRemote")) musicSimpleStyleRemote();
-    else if(type->text() == tr("ComplexStyleRemote")) musicComplexStyleRemote();
-    else
+    if(!m_musicRemoteWidget)
     {
-        m_musicRemoteWidget = tempRemote;
         return;
     }
-    tempRemote->deleteLater();
+
+    MusicRemoteWidget *tempRemote = m_musicRemoteWidget;
+    m_musicRemoteWidget = nullptr;
+
+    musicRemoteTypeChanged(type->data().toInt());
+
+    if(m_musicRemoteWidget)
+    {
+        tempRemote->deleteLater();
+    }
+}
+
+void MusicTopAreaWidget::musicRemoteTypeChanged(int type)
+{
+    switch(type)
+    {
+        case MusicRemoteWidget::Circle: musicCircleRemote(); break;
+        case MusicRemoteWidget::Square: musicSquareRemote(); break;
+        case MusicRemoteWidget::Rectangle: musicRectangleRemote(); break;
+        case MusicRemoteWidget::SimpleStyle: musicSimpleStyleRemote(); break;
+        case MusicRemoteWidget::ComplexStyle: musicComplexStyleRemote(); break;
+        case MusicRemoteWidget::Diamond: musicDiamondRemote(); break;
+        case MusicRemoteWidget::Strip: musicStripRemote(); break;
+        case MusicRemoteWidget::Ripples: musicRipplesRemote(); break;
+    }
 }
 
 void MusicTopAreaWidget::createRemoteWidget()
@@ -330,7 +396,7 @@ void MusicTopAreaWidget::createRemoteWidget()
         return;
     }
 
-    m_musicRemoteWidget->showPlayStatus(m_currentPlayStatus);
+    m_musicRemoteWidget->showPlayStatus(!MusicApplication::instance()->isPlaying());
     m_musicRemoteWidget->setVolumeValue(m_ui->musicSound->value());
     connect(m_musicRemoteWidget, SIGNAL(musicWindowSignal()), MusicApplication::instance(), SLOT(showNormal()));
     connect(m_musicRemoteWidget, SIGNAL(musicPlayPreviousSignal()), MusicApplication::instance(), SLOT(musicPlayPrevious()));
@@ -344,8 +410,10 @@ void MusicTopAreaWidget::createRemoteWidget()
 
 void MusicTopAreaWidget::drawWindowBackgroundRect()
 {
-    QString path = THEME_DIR_FULL + m_currentBgSkin + SKN_FILE;
+    QString path = USER_THEME_DIR_FULL + m_currentBgSkin + SKN_FILE;
+    MusicBackgroundSkinDialog::themeValidCheck(m_currentBgSkin, path);
     M_BACKGROUND_PTR->setMBackground(path);
+
     if(m_musicbgskin)
     {
         m_musicbgskin->updateBackground(path);
@@ -363,7 +431,7 @@ void MusicTopAreaWidget::drawWindowBackgroundRectString(const QString &path)
     {
         origin = origin.convertToFormat(QImage::Format_ARGB32);
     }
-    reRenderImage(35, &origin, &origin);
+    MusicUtils::Widget::reRenderImage(35, &origin, &origin);
 
     QPixmap afterDeal( size );
     afterDeal.fill(Qt::transparent);
@@ -375,35 +443,4 @@ void MusicTopAreaWidget::drawWindowBackgroundRectString(const QString &path)
 
     emit setTransparent(m_listAlpha);
     m_ui->background->setPixmap(afterDeal);
-}
-
-void MusicTopAreaWidget::reRenderImage(int delta, const QImage *input, QImage *output)
-{
-    for(int w=0; w<input->width(); w++)
-    {
-        for(int h=0; h<input->height(); h++)
-        {
-            QRgb rgb = input->pixel(w, h);
-            uint resultR = colorBurnTransform(qRed(rgb), delta);
-            uint resultG = colorBurnTransform(qGreen(rgb), delta);
-            uint resultB = colorBurnTransform(qBlue(rgb), delta);
-            uint newRgb = ((resultR & 255)<<16 | (resultG & 255)<<8 | (resultB & 255));
-            output->setPixel(w, h, newRgb);
-        }
-    }
-}
-
-uint MusicTopAreaWidget::colorBurnTransform(int c, int delta)
-{
-    Q_ASSERT(0 <= delta && delta < 255);
-
-    int result = (c - (uint)(c*delta)/(255 - delta));
-    if(result > 255)
-    {
-        result = 255;
-    }else if(result < 0)
-    {
-        result = 0;
-    }
-    return result;
 }

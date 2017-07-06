@@ -1,20 +1,20 @@
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
    =================================================*/
 
-import QtQuick 2.4
+import QtQuick 2.5
 import QtQuick.Layouts 1.1
 import "Core"
 
 Rectangle {
     id: ttkMusicSongSharedPage
     visible: false
-    width: parent.width
-    height: parent.height
+    width: ttkGlobal.window_width
+    height: ttkGlobal.window_height
     color: ttkTheme.color_alpha_lv12
 
     MouseArea {
@@ -111,7 +111,7 @@ Rectangle {
                 textColor: ttkTheme.color_black
                 text: qsTr("取消")
                 textSize: ttkMusicSongSharedPage.height/25
-                onPressed: {
+                onClicked: {
                     ttkMusicSongSharedPage.visible = false;
                 }
             }

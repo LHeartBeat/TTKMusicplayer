@@ -6,11 +6,13 @@
 #include "musicfunctionuiobject.h"
 #include "musicdownloadmgmtwidget.h"
 #include "musictoolsetswidget.h"
-#include "musicmydownloadrecordwidget.h"
-#include "musicwebradiotoolwidget.h"
+#include "musicdownloadrecordwidget.h"
+#include "musicwebmusicradiolistview.h"
 #include "musicconnectmobilewidget.h"
 #include "musiccloudsharedsongwidget.h"
-#include "musicqualitychoicewidget.h"
+#include "musicqualitychoicepopwidget.h"
+#include "musicsoundkmicrowidget.h"
+#include "musicrightareawidget.h"
 ///qmmp incldue
 #include "visual.h"
 #include "visualfactory.h"
@@ -18,16 +20,21 @@
 MusicLeftAreaWidget *MusicLeftAreaWidget::m_instance = nullptr;
 
 MusicLeftAreaWidget::MusicLeftAreaWidget(QWidget *parent)
-    : QWidget(parent), m_qualityChoiceWidget(nullptr)
+    : QWidget(parent)
 {
     m_instance = this;
     m_stackedWidget = nullptr;
+    m_soundKMicroWidget = nullptr;
+    m_qualityChoiceWidget = nullptr;
     m_cloudSharedSongWidget = nullptr;
     m_currentIndex = 0;
+    m_isFullOrNormal = true;
+    Visual::initialize(MusicApplication::instance());
 }
 
 MusicLeftAreaWidget::~MusicLeftAreaWidget()
 {
+    delete m_soundKMicroWidget;
     delete m_qualityChoiceWidget;
     delete m_cloudSharedSongWidget;
     delete m_stackedWidget;
@@ -46,7 +53,7 @@ MusicLeftAreaWidget *MusicLeftAreaWidget::instance()
 void MusicLeftAreaWidget::setupUi(Ui::MusicApplication* ui)
 {
     m_ui = ui;
-    m_qualityChoiceWidget = new MusicQualityChoiceWidget(this);
+    m_qualityChoiceWidget = new MusicQualityChoicePopWidget(this);
     m_ui->musicQualityWindow->addWidget(m_qualityChoiceWidget);
     m_ui->songsContainer->setLength(320, MusicAnimationStackedWidget::LeftToRight);
 
@@ -105,32 +112,25 @@ void MusicLeftAreaWidget::setupUi(Ui::MusicApplication* ui)
     ui->musicButton_mobile->setToolTip(tr("musicMobile"));
 }
 
-void MusicLeftAreaWidget::musictLoveStateClicked()
+void MusicLeftAreaWidget::musictLoveStateClicked(bool state)
 {
-    bool state = !M_SETTING_PTR->value(MusicSettingManager::MuiscSongLovedChoiced).toBool();
     m_ui->musicBestLove->setStyleSheet(state ? MusicUIObject::MKGBtnLove : MusicUIObject::MKGBtnUnLove);
-    M_SETTING_PTR->setValue(MusicSettingManager::MuiscSongLovedChoiced, state);
     emit currentLoveStateChanged();
 }
 
-void MusicLeftAreaWidget::switchToSelectedItemStyle(int index)
+void MusicLeftAreaWidget::createSoundKMicroWidget(const QString &name)
 {
-    m_ui->musicButton_cloud->setStyleSheet(MusicUIObject::MKGItemFavourite);
-    m_ui->musicButton_mydownl->setStyleSheet(MusicUIObject::MKGItemDownload);
-    m_ui->musicButton_playlist->setStyleSheet(MusicUIObject::MKGItemMusic);
-    m_ui->musicButton_radio->setStyleSheet(MusicUIObject::MKGItemRadio);
-    m_ui->musicButton_tools->setStyleSheet(MusicUIObject::MKGItemMore);
-    m_ui->musicButton_mobile->setStyleSheet(MusicUIObject::MKGItemMobile);
-    switch(index)
+    if(m_soundKMicroWidget == nullptr)
     {
-        case 0: m_ui->musicButton_playlist->setStyleSheet(MusicUIObject::MKGItemMusicClicked); break;
-        case 1: m_ui->musicButton_radio->setStyleSheet(MusicUIObject::MKGItemRadioClicked);break;
-        case 2: m_ui->musicButton_mydownl->setStyleSheet(MusicUIObject::MKGItemDownloadClicked);break;
-        case 3: m_ui->musicButton_mobile->setStyleSheet(MusicUIObject::MKGItemMobileClicked);break;
-        case 4: m_ui->musicButton_cloud->setStyleSheet(MusicUIObject::MKGItemFavouriteClicked);break;
-        case 5: m_ui->musicButton_tools->setStyleSheet(MusicUIObject::MKGItemMoreClicked);break;
-        default: break;
+        m_soundKMicroWidget = new MusicSoundKMicroWidget(this);
     }
+    m_soundKMicroWidget->startSeachKMicro(name);
+    m_soundKMicroWidget->show();
+}
+
+bool MusicLeftAreaWidget::isFullOrNormal() const
+{
+    return !m_isFullOrNormal;
 }
 
 void MusicLeftAreaWidget::musicDownloadSongToLocal()
@@ -141,13 +141,10 @@ void MusicLeftAreaWidget::musicDownloadSongToLocal()
 
 void MusicLeftAreaWidget::musicDownloadSongFinished()
 {
-    bool state = !M_SETTING_PTR->value(MusicSettingManager::DownloadMusicExistChoiced).toBool();
-    if(state)
-    {
-        m_ui->musicDownload->setStyleSheet(state ? MusicUIObject::MKGBtnDownload : MusicUIObject::MKGBtnUnDownload);
-        M_SETTING_PTR->setValue(MusicSettingManager::DownloadMusicExistChoiced, state);
-        emit currentDownloadStateChanged();
-    }
+    bool state = false;
+    MusicApplication::instance()->musicDownloadContains(state);
+    m_ui->musicDownload->setStyleSheet(state ? MusicUIObject::MKGBtnDownload : MusicUIObject::MKGBtnUnDownload);
+    emit currentDownloadStateChanged();
 }
 
 void MusicLeftAreaWidget::musicStackedSongListWidgetChanged()
@@ -190,7 +187,10 @@ void MusicLeftAreaWidget::musicStackedRadioWidgetChanged()
     m_currentIndex = 2;
 
     delete m_stackedWidget;
-    m_stackedWidget = new MusicWebRadioToolWidget(this);
+    MusicWebMusicRadioListView *w = new MusicWebMusicRadioListView(this);
+    w->initListItems();
+    m_stackedWidget = w;
+
     m_ui->songsContainer->insertWidget(1, m_stackedWidget);
     m_ui->songsContainer->setIndex(0, 0);
     m_ui->songsContainer->start(1);
@@ -206,7 +206,7 @@ void MusicLeftAreaWidget::musicStackedMyDownWidgetChanged()
     m_currentIndex = 3;
 
     delete m_stackedWidget;
-    m_stackedWidget = new MusicMyDownloadRecordWidget(this);
+    m_stackedWidget = new MusicDownloadRecordWidget(this);
     m_ui->songsContainer->insertWidget(1, m_stackedWidget);
     m_ui->songsContainer->setIndex(0, 0);
     m_ui->songsContainer->start(1);
@@ -254,7 +254,6 @@ void MusicLeftAreaWidget::musicStackedCloudWidgetChanged()
 
 void MusicLeftAreaWidget::musicAnalyzerSpectrumWidget()
 {
-    Visual::initialize(MusicApplication::instance());
     foreach(VisualFactory *v, Visual::factories())
     {
         if(v->properties().shortName.contains("analyzer"))
@@ -266,7 +265,6 @@ void MusicLeftAreaWidget::musicAnalyzerSpectrumWidget()
 
 void MusicLeftAreaWidget::musicProjectMSpectrumWidget()
 {
-    Visual::initialize(MusicApplication::instance());
     foreach(VisualFactory *v, Visual::factories())
     {
         if(v->properties().shortName.contains("projectm"))
@@ -294,4 +292,50 @@ void MusicLeftAreaWidget::cloudSharedSongUploadAllDone()
 
     delete m_cloudSharedSongWidget;
     m_cloudSharedSongWidget = nullptr;
+}
+
+void MusicLeftAreaWidget::showFullOrNormal()
+{
+    if(m_ui->musiclrccontainerforinline->lrcDisplayExpand())
+    {
+        MusicRightAreaWidget::instance()->musicLrcDisplayAllButtonClicked();
+    }
+
+    m_isFullOrNormal = !m_isFullOrNormal;
+    m_ui->topWidget->setVisible(m_isFullOrNormal);
+    m_ui->bottomWidget->setVisible(m_isFullOrNormal);
+    m_ui->centerLeftWidget->setVisible(m_isFullOrNormal);
+    m_ui->songsContainer->setVisible(m_isFullOrNormal);
+    m_ui->stackedFunctionWidget->setVisible(m_isFullOrNormal);
+    m_ui->lrcDisplayAllButton->setVisible(m_isFullOrNormal);
+
+    m_ui->musiclrccontainerforinline->createFloatPlayWidget();
+    m_isFullOrNormal ? MusicApplication::instance()->showNormal() : MusicApplication::instance()->showFullScreen();
+    m_ui->musiclrccontainerforinline->showFullOrNormal();
+}
+
+void MusicLeftAreaWidget::switchToSelectedItemStyle(int index)
+{
+    m_ui->musicButton_cloud->setStyleSheet(MusicUIObject::MKGItemFavourite);
+    m_ui->musicButton_mydownl->setStyleSheet(MusicUIObject::MKGItemDownload);
+    m_ui->musicButton_playlist->setStyleSheet(MusicUIObject::MKGItemMusic);
+    m_ui->musicButton_radio->setStyleSheet(MusicUIObject::MKGItemRadio);
+    m_ui->musicButton_tools->setStyleSheet(MusicUIObject::MKGItemMore);
+    m_ui->musicButton_mobile->setStyleSheet(MusicUIObject::MKGItemMobile);
+
+    switch(index)
+    {
+        case 0: m_ui->musicButton_playlist->setStyleSheet(MusicUIObject::MKGItemMusicClicked); break;
+        case 1: m_ui->musicButton_radio->setStyleSheet(MusicUIObject::MKGItemRadioClicked); break;
+        case 2: m_ui->musicButton_mydownl->setStyleSheet(MusicUIObject::MKGItemDownloadClicked); break;
+        case 3: m_ui->musicButton_mobile->setStyleSheet(MusicUIObject::MKGItemMobileClicked); break;
+        case 4: m_ui->musicButton_cloud->setStyleSheet(MusicUIObject::MKGItemFavouriteClicked); break;
+        case 5: m_ui->musicButton_tools->setStyleSheet(MusicUIObject::MKGItemMoreClicked); break;
+        default: break;
+    }
+
+    if(m_ui->musiclrccontainerforinline->lrcDisplayExpand())
+    {
+        MusicRightAreaWidget::instance()->musicLrcDisplayAllButtonClicked();
+    }
 }

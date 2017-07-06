@@ -3,7 +3,7 @@
 
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
@@ -121,19 +121,6 @@ public:
     Q_INVOKABLE void setEqInformation();
     /*!
      * Set eq information.
-     */
-
-    static QStringList supportFormatsString();
-    /*!
-     * Get player supported formats.
-     */
-    static QStringList supportFormatsFilterString();
-    /*!
-     * Get player supported formats filter.
-     */
-    static QStringList supportFormatsFilterDialogString();
-    /*!
-     * Get player supported formats filter dialog.
      */
 
 Q_SIGNALS:

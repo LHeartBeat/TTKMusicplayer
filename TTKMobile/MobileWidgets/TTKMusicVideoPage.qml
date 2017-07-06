@@ -1,12 +1,12 @@
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
    =================================================*/
 
-import QtQuick 2.4
+import QtQuick 2.5
 import QtMultimedia 5.5
 import QtQuick.Controls 1.4
 import QtQuick.Controls.Styles 1.4
@@ -59,7 +59,7 @@ Rectangle{
                     source: "qrc:/image/landscape_player_btn_pause_normal"
 
                     property int status: 1
-                    onPressed: {
+                    onClicked: {
                         if(status === 1) {
                             videoPlayer.pause();
                             status = 0;
@@ -122,7 +122,7 @@ Rectangle{
                     MouseArea {
                         id: videoTimeSliderArea
                         anchors.fill: parent
-                        onPressed: {
+                        onClicked: {
                             if(videoPlayer.seekable) {
                                 var pos = videoPlayer.duration * mouse.x / parent.width;
                             }

@@ -3,7 +3,7 @@
 
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
@@ -12,8 +12,9 @@
 #include <QWidget>
 #include "musicglobaldefine.h"
 
-class MusicQualityChoiceWidget;
+class MusicSoundKMicroWidget;
 class MusicCloudSharedSongWidget;
+class MusicQualityChoicePopWidget;
 
 namespace Ui {
     class MusicApplication;
@@ -44,13 +45,18 @@ public:
     /*!
      * Set up app ui.
      */
-    void musictLoveStateClicked();
+    void musictLoveStateClicked(bool state);
     /*!
      * Reset current music love icon state.
      */
-    void switchToSelectedItemStyle(int index);
+    void createSoundKMicroWidget(const QString &name);
     /*!
-     * Switch to selected item style.
+     * Create sound KMicro widget.
+     */
+
+    bool isFullOrNormal() const;
+    /*!
+     * Current is show full container.
      */
 
 Q_SIGNALS:
@@ -108,13 +114,24 @@ public Q_SLOTS:
     /*!
      * All files upload finsihed.
      */
+    void showFullOrNormal();
+    /*!
+     * Show full container or not.
+     */
 
 protected:
+    void switchToSelectedItemStyle(int index);
+    /*!
+     * Switch to selected item style.
+     */
+
     Ui::MusicApplication *m_ui;
 
     int m_currentIndex;
+    bool m_isFullOrNormal;
     QWidget *m_stackedWidget;
-    MusicQualityChoiceWidget *m_qualityChoiceWidget;
+    MusicSoundKMicroWidget *m_soundKMicroWidget;
+    MusicQualityChoicePopWidget *m_qualityChoiceWidget;
     MusicCloudSharedSongWidget *m_cloudSharedSongWidget;
 
     static MusicLeftAreaWidget *m_instance;

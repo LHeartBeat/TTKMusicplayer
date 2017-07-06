@@ -1,6 +1,6 @@
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
@@ -37,6 +37,13 @@ Item {
         }
     }
 
+    Connections {
+        target: TTK_NETWORK
+        onNetworkConnectionStateChanged: {
+            networkWidget.visible = !state;
+        }
+    }
+
     ColumnLayout {
         spacing: 0
         anchors.fill: parent
@@ -45,7 +52,7 @@ Item {
         Rectangle {
             id: ttkMainMenubar
             Layout.fillWidth: true
-            height: ttkGlobal.dpHeight(ttkTheme.topbar_height)
+            Layout.preferredHeight: ttkGlobal.dpHeight(ttkTheme.topbar_height)
             color: ttkTheme.topbar_background
 
             RowLayout {
@@ -58,7 +65,7 @@ Item {
                     Layout.preferredWidth: ttkGlobal.dpWidth(50)
                     Layout.preferredHeight: ttkGlobal.dpHeight(50)
                     anchors.left: parent.left
-                    onPressed: {
+                    onClicked: {
                         ttkMainStackView.push("qrc:/MobileWidgets/TTKMainSettingPage.qml");
                     }
                 }
@@ -68,8 +75,8 @@ Item {
                     Layout.preferredWidth: ttkGlobal.dpWidth(50)
                     Layout.preferredHeight: ttkGlobal.dpHeight(50)
                     anchors.right: parent.right
-                    onPressed: {
-                        ttkMainStackView.push("qrc:/MobileWidgets/TTKOnlineSearchPage.qml");
+                    onClicked: {
+                        ttkMainStackView.push("qrc:/MobileWidgets/TTKMusicOnlineSearchPage.qml");
                     }
                 }
 
@@ -99,6 +106,24 @@ Item {
                     spacing: 5
                     anchors.fill: parent
 
+                    ///networkWidget
+                    Rectangle {
+                        id: networkWidget
+                        Layout.preferredWidth: ttkMainWindow.width
+                        Layout.preferredHeight: ttkGlobal.dpHeight(30)
+                        anchors.left: parent.left
+                        color: ttkTheme.color_white
+                        visible: false
+
+                        Text {
+                            anchors.fill: parent
+                            verticalAlignment: Qt.AlignVCenter
+                            horizontalAlignment: Qt.AlignHCenter
+                            text: qsTr("你已经进入了一个无网络的异次元空间")
+                            color: ttkTheme.color_red
+                        }
+                    }
+
                     ///userWidget
                     Rectangle {
                         id: userWidget
@@ -117,7 +142,7 @@ Item {
                                 leftMargin: ttkGlobal.dpHeight(10)
                             }
                             color: ttkTheme.color_alpha_lv0
-                            foreground: "qrc:/image/test"
+                            foreground: "qrc:/image/main_background"
                             background: "qrc:/image/radius_mask"
                         }
 
@@ -132,7 +157,7 @@ Item {
                             verticalAlignment: Text.AlignVCenter
                             horizontalAlignment: Text.AlignHCenter
                             font.pixelSize: parent.height/4
-                            text: qsTr("个性电台")
+                            text: qsTr("天天酷音")
                         }
 
                         Text {
@@ -146,7 +171,7 @@ Item {
                             verticalAlignment: Text.AlignVCenter
                             horizontalAlignment: Text.AlignHCenter
                             color: ttkTheme.color_gray
-                            text: qsTr("偶遇身边好音乐")
+                            text: qsTr("畅想无限音乐")
                         }
                     }
 
@@ -167,7 +192,7 @@ Item {
                             source: "qrc:/image/mymusic_icon_allsongs_highlight"
                             mainTitle: qsTr("本地歌曲")
                             subTitle: TTK_APP.mediaCount(ttkTheme.music_normal_list)
-                            onPressed: {
+                            onClicked: {
                                 TTK_APP.setToolBoxIndex(ttkTheme.music_normal_list);
                                 ttkMainStackView.push("qrc:/MobileWidgets/TTKMusicListsPage.qml");
                             }
@@ -181,7 +206,7 @@ Item {
                             }
                             source: "qrc:/image/mymusic_icon_download_normal"
                             mainTitle: qsTr("下载歌曲")
-                            onPressed: {
+                            onClicked: {
                                 TTK_APP.setToolBoxIndex(ttkTheme.music_download_list);
                                 ttkMainStackView.push("qrc:/MobileWidgets/TTKMusicDownloadListsPage.qml");
                             }
@@ -196,7 +221,7 @@ Item {
                             source: "qrc:/image/mymusic_icon_history_highlight"
                             mainTitle: qsTr("最近播放")
                             subTitle: TTK_APP.mediaCount(ttkTheme.music_recent_list)
-                            onPressed: {
+                            onClicked: {
                                 TTK_APP.setToolBoxIndex(ttkTheme.music_recent_list);
                                 ttkMainStackView.push("qrc:/MobileWidgets/TTKMusicRecentListsPage.qml");
                             }
@@ -210,7 +235,7 @@ Item {
                             }
                             source: "qrc:/image/mymusic_icon_favorite_normal"
                             mainTitle: qsTr("我喜欢")
-                            onPressed: {
+                            onClicked: {
                                 TTK_APP.setToolBoxIndex(ttkTheme.music_lovest_list);
                                 ttkMainStackView.push("qrc:/MobileWidgets/TTKMusicLovestListsPage.qml");
                             }
@@ -224,9 +249,9 @@ Item {
                             }
                             source: "qrc:/image/mymusic_icon_mv_highlight"
                             mainTitle: qsTr("下载MV")
-                            onPressed: {
+                            onClicked: {
                                 TTK_APP.setToolBoxIndex(ttkTheme.music_downmv_list);
-                                ttkMainStackView.push("qrc:/MobileWidgets/TTKMVDownloadListsPage.qml");
+                                ttkMainStackView.push("qrc:/MobileWidgets/TTKMusicMVDownloadListsPage.qml");
                             }
                         }
 
@@ -239,7 +264,7 @@ Item {
                             source: "qrc:/image/mymusic_icon_recognizer_normal"
                             mainTitle: qsTr("听歌识曲")
                             subTitle: qsTr("[绿旋风]")
-                            onPressed: {
+                            onClicked: {
                                 TTK_APP.setToolBoxIndex(ttkTheme.music_musicrg_list);
                                 ttkMainStackView.push("qrc:/MobileWidgets/TTKMusicIdentifyListsPage.qml");
                             }
@@ -275,13 +300,13 @@ Item {
                             Image {
                                 id: radioImageArea
                                 anchors.fill: parent
-                                source: "qrc:/image/test"
+                                source: "qrc:/image/default_background"
                             }
 
                             TTKImageButton {
                                 anchors.fill: parent
                                 source: "qrc:/image/radio_play_play"
-                                onPressed: {
+                                onClicked: {
                                     ttkRaioHelper.init();
                                     if(ttkRaioHelper.isPlaying()) {
                                         source = "qrc:/image/radio_play_play";
@@ -335,7 +360,7 @@ Item {
 
                             Rectangle {
                                 Layout.fillWidth: true
-                                height: ttkGlobal.dpHeight(50)
+                                Layout.preferredHeight: ttkGlobal.dpHeight(50)
                                 Layout.alignment: Qt.AlignCenter
 
                                 Text {

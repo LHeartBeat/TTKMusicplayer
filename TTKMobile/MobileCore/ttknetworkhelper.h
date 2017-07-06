@@ -3,7 +3,7 @@
 
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
@@ -12,8 +12,7 @@
 #include <QObject>
 #include "musicobject.h"
 #include "musicmobileglobaldefine.h"
-
-class MusicDownLoadQueryMultipleThread;
+#include "musicdownloadquerythreadabstract.h"
 
 /*! @brief The class of the music network helper.
  * @author Greedysky <greedysky@163.com>
@@ -38,6 +37,7 @@ public:
      */
     ~TTKNetworkHelper();
 
+    //////////////////////////////////////////////////////
     Q_INVOKABLE void setQueryType(int type);
     /*!
      * Set network query type.
@@ -66,8 +66,25 @@ public:
     /*!
      * Get searched information attributes.
      */
+    Q_INVOKABLE void setCurrentServer();
+    /*!
+     * Set current server index.
+     */
+    Q_INVOKABLE void setCurrentServer(int index);
+    /*!
+     * Set current server index.
+     */
+    Q_INVOKABLE int getCurrentServer() const;
+    /*!
+     * Get current server index.
+     */
 
 Q_SIGNALS:
+    void networkConnectionStateChanged(bool state);
+    /*!
+     * Network connection state changed.
+     * default status is true, means connected network.
+     */
     void clearAllItems();
     /*!
      * Clear all items before the new query start.
@@ -100,6 +117,10 @@ Q_SIGNALS:
     /*!
      * Download (download) movie finished.
      */
+    void downLoadDataHasFinished(bool empty);
+    /*!
+     * Download data just has finished.
+     */
 
 private Q_SLOTS:
     void downLoadDataChanged();
@@ -110,8 +131,20 @@ private Q_SLOTS:
     /*!
      * Search data dwonload finished.
      */
+    void createSearchedItems(const MusicSearchedItem &songItem);
+    /*!
+     * Create the current items by song name\ artist name and time.
+     */
+    void downloadProgressChanged(float percent, const QString &total, qint64 time);
+    /*!
+     * Update download percent\ total time and current time progress.
+     */
 
 protected:
+    void closeWindowNotify();
+    /*!
+     * Close window notify.
+     */
     void dataForDownloadSong();
     /*!
      * Query for download song.
@@ -144,7 +177,7 @@ protected:
 
     int m_currentIndex;
     Type m_queryType;
-    MusicDownLoadQueryMultipleThread *m_queryThread;
+    MusicDownLoadQueryThreadAbstract *m_queryThread;
 
 };
 

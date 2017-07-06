@@ -1,6 +1,6 @@
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
@@ -38,9 +38,9 @@ Rectangle{
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
             font.pixelSize: parent.height/11
-            text: qsTr("TTK Music Player") + "\n\n" +
+            text: qsTr("TTKMusicPlayer") + "\n\n" +
                   qsTr("Directed By Greedysky") +
-                  ("\nCopyright© 2014-2016") +
+                  ("\nCopyright© 2015-2017") +
                   ("\nMail:Greedysky@163.com");
         }
 
@@ -53,7 +53,7 @@ Rectangle{
             }
             textColor: ttkTheme.topbar_background
             text: qsTr("关于")
-            onPressed: {
+            onClicked: {
                 Qt.openUrlExternally("https://github.com/Greedysky/TTKMusicplayer")
             }
         }

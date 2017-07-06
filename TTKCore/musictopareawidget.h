@@ -3,7 +3,7 @@
 
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
@@ -16,6 +16,7 @@
 class MusicUserWindow;
 class MusicRemoteWidget;
 class MusicBackgroundSkinDialog;
+class MusicCounterPVDownloadThread;
 
 namespace Ui {
     class MusicApplication;
@@ -51,11 +52,17 @@ public:
     /*!
      * Set background skin and alpha and list alpha parameter.
      */
-    QString getBgSkin() const {return m_currentBgSkin;}
+
+    inline QString getBgSkin() const { return m_currentBgSkin; }
     /*!
      * Get background skin name.
      */
-    int getBgSkinAlpha() const {return m_alpha;}
+    QPixmap getBgSkinPixmap() const;
+    /*!
+     * Get background skin pixmap.
+     */
+
+    inline int getBgSkinAlpha() const { return m_alpha; }
     /*!
      * Get background skin alpha.
      */
@@ -97,6 +104,10 @@ Q_SIGNALS:
      */
 
 public Q_SLOTS:
+    void musicSearchTopListInfoFinished(const QString &data);
+    /*!
+     * Search top list information finished.
+     */
     void musicShowSkinChangedWindow();
     /*!
      * Show change background skin dailog.
@@ -124,6 +135,10 @@ public Q_SLOTS:
     void musicBackgroundChanged();
     /*!
      * Changed current background skin.
+     */
+    void musicBackgroundSliderStateChanged(bool state);
+    /*!
+     * Current slider state changed.
      */
     void musicBgThemeDownloadFinished();
     /*!
@@ -162,11 +177,23 @@ public Q_SLOTS:
     /*!
      * Changed current remote to complex style mode.
      */
+    void musicStripRemote();
+    /*!
+     * Changed current remote to strip mode.
+     */
+    void musicRipplesRemote();
+    /*!
+     * Changed current remote to ripples mode.
+     */
     void musicDeleteRemote();
     /*!
      * Delete current remote.
      */
     void musicRemoteTypeChanged(QAction *type);
+    /*!
+     * Switch to diff remote type.
+     */
+    void musicRemoteTypeChanged(int type);
     /*!
      * Switch to diff remote type.
      */
@@ -184,24 +211,16 @@ protected:
     /*!
      * Draw window background rect by picture.
      */
-    void reRenderImage(int delta, const QImage *input, QImage *output);
-    /*!
-     * Rerender the image by color burn transform.
-     */
-    uint colorBurnTransform(int c, int delta);
-    /*!
-     * Image color burn transform.
-     */
 
     Ui::MusicApplication *m_ui;
     MusicUserWindow *m_musicUserWindow;
     MusicBackgroundSkinDialog *m_musicbgskin;
     MusicRemoteWidget *m_musicRemoteWidget;
+    MusicCounterPVDownloadThread *m_counterPVThread;
 
     QString m_currentBgSkin;
     int m_alpha, m_listAlpha;
     QTimer m_pictureCarouselTimer;
-    bool m_currentPlayStatus;
 
     static MusicTopAreaWidget *m_instance;
 };

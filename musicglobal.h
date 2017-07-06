@@ -3,7 +3,7 @@
 
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
@@ -83,31 +83,35 @@
  */
 namespace MusicObject
 {
-    typedef signed char        MInt8;         /* 8 bit signed */
-    typedef unsigned char      MUint8;        /* 8 bit unsigned */
-    typedef short              MInt16;        /* 16 bit signed */
-    typedef unsigned short     MUint16;       /* 16 bit unsigned */
-    typedef int                MInt32;        /* 32 bit signed */
-    typedef unsigned int       MUint32;       /* 32 bit unsigned */
-    typedef long long          MInt64;        /* 64 bit signed */
-    typedef unsigned long long MUint64;       /* 64 bit unsigned */
+    typedef signed char                        MInt8;         /* 8 bit signed */
+    typedef unsigned char                      MUint8;        /* 8 bit unsigned */
+    typedef short                              MInt16;        /* 16 bit signed */
+    typedef unsigned short                     MUint16;       /* 16 bit unsigned */
+    typedef int                                MInt32;        /* 32 bit signed */
+    typedef unsigned int                       MUint32;       /* 32 bit unsigned */
+    typedef long long                          MInt64;        /* 64 bit signed */
+    typedef unsigned long long                 MUint64;       /* 64 bit unsigned */
     ///////////////////////////////////////
 
-    typedef double             MDouble;       /* double */
-    typedef float              MFloat;        /* float */
-    typedef bool               MBool;         /* bool */
+    typedef double                             MDouble;       /* double */
+    typedef float                              MFloat;        /* float */
+    typedef bool                               MBool;         /* bool */
     ///////////////////////////////////////
 
+    typedef QList<QVariant>                    MVariantList;            /* variantlist */
     typedef QList<QStringList>                 MStringLists;            /* stringlists */
     typedef QList<int>                         MIntList;                /* intlist */
     typedef QList<MIntList>                    MIntLists;               /* intlists */
+    typedef QSet<QVariant>                     MVariantSet;             /* variantset */
     typedef QSet<int>                          MIntSet;                 /* intset */
     typedef QSet<MIntSet>                      MIntSets;                /* intsets */
+    typedef QMap<QVariant, QVariant>           MVariantsMap;            /* variantsmap */
     typedef QMap<QString, QVariant>            MStriantMap;             /* stringVariantMap */
     typedef QMap<QString, QString>             MStringsMap;             /* stringsMap */
     typedef QMap<QString, QStringList>         MStringsListMap;         /* stringStrlistsMap */
     typedef QMap<int, MIntList>                MIntsListMap;            /* intIntlistMap */
     typedef QMap<qint64, QString>              MIntStringMap;           /* intStrMap */
+    typedef QMapIterator<QVariant, QVariant>   MVariantsMapIterator;    /* variantsmMapIterator */
     typedef QMapIterator<QString, QVariant>    MStriantMapIterator;     /* stringVariantMapIterator */
     typedef QMapIterator<QString, QString>     MStringsMapIterator;     /* stringsMapIterator */
     typedef QMapIterator<QString, QStringList> MStringsListMapIterator; /* stringStrlistsMapIterator */

@@ -3,20 +3,17 @@
 
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
    =================================================*/
 
-#include <QMenu>
-#include <QTimer>
-#include <QCloseEvent>
 #include "musicabstractmoveresizewidget.h"
 
 class MusicPlayer;
 class MusicPlaylist;
-class MusicSongsSummarizied;
+class MusicSongsSummariziedWidget;
 class MusicBottomAreaWidget;
 class MusicTopAreaWidget;
 class MusicRightAreaWidget;
@@ -48,10 +45,16 @@ public:
     /*!
      * Get class object instance.
      */
+
     QString getCurrentFileName() const;
     /*!
      * Get current file name.
      */
+    QString getCurrentFilePath() const;
+    /*!
+     * Get current file path.
+     */
+
     bool checkMusicListCurrentIndex() const;
     /*!
      * Check current list index is -1 or not.
@@ -64,15 +67,29 @@ public:
     /*!
      * Import music datas into container.
      */
+
+    QString musicDownloadContains(bool &contains) const;
+    /*!
+     * Get music current song download contains.
+     */
+    bool musicLovestContains() const;
+    /*!
+     * Get music current song lovest contains.
+     */
+    bool musicListLovestContains(int index) const;
+    /*!
+     * Get music list current song lovest contains.
+     */
     void updateCurrentArtist();
     /*!
      * Update current artist when it download finished.
      */
-    int getPlayState() const;
+
+    bool isPlaying() const;
     /*!
      * Get current play state.
      */
-    int getPlayMode() const;
+    MusicObject::SongPlayMode getPlayMode() const;
     /*!
      * Get current play mode.
      */
@@ -97,10 +114,6 @@ public Q_SLOTS:
     void showCurrentSong(int index);
     /*!
      * Show current song some information.
-     */
-    void musicStopPlay();
-    /*!
-     * Set current player to stop.
      */
     void musicStatePlay();
     /*!
@@ -162,11 +175,19 @@ public Q_SLOTS:
     /*!
      * Export music songs by item list.
      */
+    void musicPlaySort(int row);
+    /*!
+     * Set current music play list sort.
+     */
     void musicPlayIndex(int row);
     /*!
      * Set current row index music to play.
      */
     void musicPlayIndex(int row, int col);
+    /*!
+     * Set current row index music to play.
+     */
+    void musicPlayIndexClicked(int row, int col);
     /*!
      * Set current row index music to play.
      */
@@ -191,6 +212,10 @@ public Q_SLOTS:
      * Show current play index.
      */
     void musicAddSongToLovestListAt();
+    /*!
+     * Add music song to lovest list by row.
+     */
+    void musicAddSongToLovestListAt(bool state);
     /*!
      * Add music song to lovest list by row.
      */
@@ -223,7 +248,7 @@ public Q_SLOTS:
      * Get settings parameters.
      */
     /////////////////////////////////////////////
-    ///This is a slot by MusicSongsSummarizied's signal emit
+    ///This is a slot by MusicSongsSummariziedWidget's signal emit
     void setDeleteItemAt(const MusicObject::MIntList &index, bool remove);
     /*!
      * Delete items from indexs.
@@ -261,6 +286,7 @@ protected:
     virtual void dragMoveEvent(QDragMoveEvent *event) override;
     virtual void dropEvent(QDropEvent *event) override;
     virtual void contextMenuEvent(QContextMenuEvent *event) override;
+    virtual void mouseDoubleClickEvent(QMouseEvent *event) override;
 #if defined(Q_OS_WIN)
 #  ifdef MUSIC_GREATER_NEW
     virtual bool nativeEvent(const QByteArray &, void *, long *) override;
@@ -272,6 +298,10 @@ protected:
      * Override the widget event.
      */
 
+    void setMusicPlayIndex();
+    /*!
+     * Set music current play index.
+     */
     void readXMLConfigFromText();
     /*!
      * Read XML config from text.
@@ -282,13 +312,13 @@ protected:
      */
 
 private:
-    Ui::MusicApplication *ui;
+    Ui::MusicApplication *m_ui;
     bool m_playControl;
     int m_currentMusicSongTreeIndex;
 
     MusicPlayer* m_musicPlayer;
     MusicPlaylist* m_musicList;
-    MusicSongsSummarizied *m_musicSongTree;
+    MusicSongsSummariziedWidget *m_musicSongTree;
     MusicBottomAreaWidget *m_bottomAreaWidget;
     MusicTopAreaWidget *m_topAreaWidget;
     MusicRightAreaWidget *m_rightAreaWidget;

@@ -1,10 +1,6 @@
-#-------------------------------------------------
-#
-# Project created by QtCreator 2014-08-08T23:19:41
-#
 # =================================================
 # * This file is part of the TTK Music Player project
-# * Copyright (c) 2014 - 2016 Greedysky Studio
+# * Copyright (c) 2015 - 2017 Greedysky Studio
 # * All rights reserved!
 # * Redistribution and use of the source code or any derivative
 # * works are strictly forbiden.
@@ -21,22 +17,22 @@ TRANSLATIONS += TTKLanguage/cn.ts \
 
 ##update translation
 unix:exists($$[QT_INSTALL_BINS]/lrelease){
-LRELEASE_EXECUTABLE = $$[QT_INSTALL_BINS]/lrelease
+    LRELEASE_EXECUTABLE = $$[QT_INSTALL_BINS]/lrelease
 }
 
 unix:exists($$[QT_INSTALL_BINS]/lrelease-qt5){
-LRELEASE_EXECUTABLE = $$[QT_INSTALL_BINS]/lrelease-qt5
+    LRELEASE_EXECUTABLE = $$[QT_INSTALL_BINS]/lrelease-qt5
 }
 
 win32:exists($$[QT_INSTALL_BINS]/lrelease.exe){
-LRELEASE_EXECUTABLE = $$[QT_INSTALL_BINS]/lrelease.exe
+    LRELEASE_EXECUTABLE = $$[QT_INSTALL_BINS]/lrelease.exe
 }
 
 isEmpty(LRELEASE_EXECUTABLE){
-  error(Could not find lrelease executable)
+    error(Could not find lrelease executable)
 }
 else{
-  message(Found lrelease executable: $$LRELEASE_EXECUTABLE)
+    message(Found lrelease executable: $$LRELEASE_EXECUTABLE)
 }
 
 unix:{

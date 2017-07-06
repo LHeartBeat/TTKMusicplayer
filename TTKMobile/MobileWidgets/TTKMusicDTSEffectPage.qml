@@ -1,12 +1,12 @@
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
    =================================================*/
 
-import QtQuick 2.4
+import QtQuick 2.5
 import QtQuick.Controls 1.2
 import QtQuick.Layouts 1.1
 import "Core"
@@ -36,7 +36,7 @@ Rectangle {
                     Layout.preferredWidth: ttkGlobal.dpWidth(50)
                     Layout.preferredHeight: ttkGlobal.dpHeight(50)
                     anchors.left: parent.left
-                    onPressed: {
+                    onClicked: {
                         ttkOutStackView.pop();
                     }
                 }
@@ -86,7 +86,7 @@ Rectangle {
                             Layout.preferredWidth: ttkGlobal.dpWidth(65)
                             source: TTK_PLAYER.getMusicEnhanced() === 0 ? "qrc:/image/dts_switch_off"
                                                                         : "qrc:/image/dts_switch_on"
-                            onPressed: {
+                            onClicked: {
                                 TTK_PLAYER.setMusicEnhanced(0);
                                 source = "qrc:/image/dts_switch_off";
                                 itemListView.currentIndex = -1;
@@ -223,7 +223,7 @@ Rectangle {
 
                     MouseArea {
                         anchors.fill: parent
-                        onPressed: {
+                        onClicked: {
                             ttkOutStackView.push("qrc:/MobileWidgets/TTKMusicEqualizerPage.qml");
                             TTK_PLAYER.setMusicEnhanced(0);
                             itemListView.currentIndex = -1;

@@ -3,7 +3,7 @@
 
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
@@ -20,7 +20,7 @@ class TTKMusicPlayer;
 class TTKNetworkHelper;
 class TTKMusicLyricModel;
 class TTKMusicSongsSummarizied;
-class MusicDownloadStatusLabel;
+class MusicDownloadStatusObject;
 
 /*! @brief The class of the music application.
  * @author Greedysky <greedysky@163.com>
@@ -58,6 +58,10 @@ public:
     Q_INVOKABLE void removeMusicSongs(int index);
     /*!
      * Remove music data from container by index.
+     */
+    Q_INVOKABLE void removeMusicSongsFromManager(int type, int index);
+    /*!
+     * Remove music data from container manager by index.
      */
 
     Q_INVOKABLE bool checkLovestMusicSong() const;
@@ -97,6 +101,10 @@ public:
     Q_INVOKABLE QString mediaPath(int tool, int index) const;
     /*!
      * Get play music media path.
+     */
+    Q_INVOKABLE int mediaPlayCount(int index) const;
+    /*!
+     * Get play music counts.
      */
     Q_INVOKABLE QString artistImagePath() const;
     /*!
@@ -160,7 +168,7 @@ public:
     /*!
      * Set time to quit app.
      */
-
+    ///////////////////////////////////////////////////////////////////////////////////
 
 Q_SIGNALS:
     void updateCurrentArtist();
@@ -220,7 +228,7 @@ protected:
     TTKNetworkHelper *m_networkHelper;
     TTKMusicLyricModel *m_ttkLrcModel;
     TTKMusicSongsSummarizied *m_songsSummarizied;
-    MusicDownloadStatusLabel *m_downloadStatus;
+    MusicDownloadStatusObject *m_downloadStatus;
 
 };
 

@@ -1,6 +1,6 @@
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
@@ -13,19 +13,21 @@ Rectangle {
 
     property alias source: image.source
 
-    signal pressed
+    signal clicked
     
     Image {
         id: image
         smooth: true
         anchors.fill: parent
     }
+
     MouseArea {
         id: mouseArea
         anchors.fill: parent
         onClicked: {
-            ttkImageButton.pressed();
+            ttkImageButton.clicked();
         }
     }
+
     color: ttkTheme.color_alpha_lv0
 }

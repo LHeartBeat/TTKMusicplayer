@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.11)
 
-set(TARGET_NAME MusicExtras)
+set(TARGET_NAME TTKExtras)
 project(${TARGET_NAME})
 
 if(COMMAND cmake_policy)
@@ -18,7 +18,7 @@ macro(_TO_FOUND_WEBKIT module)
     NAMES ${module}
     PATHS ${QT_INSTALL_LIBS}
   )
-  STRING(REGEX MATCH "${QT_WEBKIT_MODULE_NAME}" QT_WEBKIT_NAME_FILTER ${QT_WEBKIT_MODULE})
+  string(REGEX MATCH "${QT_WEBKIT_MODULE_NAME}" QT_WEBKIT_NAME_FILTER ${QT_WEBKIT_MODULE})
   string(COMPARE EQUAL "${QT_WEBKIT_NAME_FILTER}" "${QT_WEBKIT_MODULE_NAME}" QT_RESULT)
   if(${QT_RESULT})
     find_package(Qt5WebKit REQUIRED)
@@ -65,7 +65,11 @@ endif()
 
 
 set(MUSIC_HEADERS
-    musicextrasglobaldefine.h
+    ../musicextrasglobaldefine.h
+    qaes/aes.h
+    qaes/aes_locl.h
+    qaes/cbc128.h
+    qaes/qaeswrap.h
     qhz2py/pinyinresource.h
     qhz2py/chinesehelper.h
     qhz2py/pinyinhelper.h
@@ -106,6 +110,10 @@ set(MUSIC_HEADERS
   )
 
 set(MUSIC_SOURCES
+    qaes/aes_cbc.cpp
+    qaes/aes_core.cpp
+    qaes/cbc128.cpp
+    qaes/qaeswrap.cpp
     qshortcut/qxtglobalshortcut.cpp
     qhz2py/pinyinresource.cpp
     qhz2py/chinesehelper.cpp
@@ -143,7 +151,7 @@ set(MUSIC_SOURCES
   )
 
 if(WIN32)
-    list(APPEND MUSIC_SOURCES qshortcut/qxtglobalshortcut_win.cpp)
+    list(APPEND MUSIC_SOURCES qshortcut/qxtglobalshortcut_win.cpp MusicExtras.rc)
 else(UNIX)
     list(APPEND MUSIC_SOURCES qshortcut/qxtglobalshortcut_x11.cpp)
 endif()
@@ -156,7 +164,7 @@ if(TTK_QT_VERSION VERSION_GREATER "4")
   else()
     add_library(${TARGET_NAME} STATIC ${MUSIC_SOURCES}  ${MUSIC_MOC_H} ${MUSIC_HEADERS})
   endif()
-  list(APPEND QT5_LIBS Qt5::Core Qt5::Gui Qt5::Widgets Qt5::WebKit Qt5::WebKitWidgets MusicUi -luser32)
+  list(APPEND QT5_LIBS Qt5::Core Qt5::Gui Qt5::Widgets Qt5::WebKit Qt5::WebKitWidgets TTKUi -luser32)
   if(UNIX)
     list(REMOVE_ITEM QT5_LIBS -luser32)
     list(APPEND QT5_LIBS Qt5::X11Extras)
@@ -170,7 +178,7 @@ else()
   else()
     add_library(${TARGET_NAME} STATIC ${MUSIC_SOURCES} ${MUSIC_MOC_H} ${MUSIC_HEADERS})
   endif()
-  list(APPEND QT4_LIBS ${QT_QTGUI_LIBRARY} ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTWEBKIT_LIBRARY} MusicUi -luser32)
+  list(APPEND QT4_LIBS ${QT_QTGUI_LIBRARY} ${QT_QTCORE_LIBRARY} ${QT_QTNETWORK_LIBRARY} ${QT_QTWEBKIT_LIBRARY} TTKUi -luser32)
   if(UNIX)
     list(REMOVE_ITEM QT4_LIBS -luser32)
   endif()

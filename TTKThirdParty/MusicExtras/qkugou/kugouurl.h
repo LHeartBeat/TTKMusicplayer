@@ -3,7 +3,7 @@
 
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
@@ -89,10 +89,6 @@ public:
     static QString getMVFanxingUrl();
     /*!
      * Get MV Fanxing Url.
-     */
-    static QString getMVStarMusicUrl();
-    /*!
-     * Get MV Star Music Url.
      */
 
     //kugou web

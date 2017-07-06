@@ -1,6 +1,6 @@
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
@@ -212,7 +212,7 @@ Rectangle {
                             TextArea {
                                 id: filePathArea
                                 enabled: false
-                                Layout.preferredWidth: mainArea.width - ttkGlobal.dpWidth(20)
+                                Layout.preferredWidth: mainArea.width - ttkGlobal.dpWidth(30)
                                 Layout.preferredHeight: mainArea.getFixedHeight()*2
                                 wrapMode: Text.WrapAnywhere
                                 anchors {

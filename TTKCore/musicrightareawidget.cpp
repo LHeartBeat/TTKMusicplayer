@@ -3,13 +3,15 @@
 #include "musicapplication.h"
 #include "musicuiobject.h"
 #include "musiclrccontainerfordesktop.h"
+#include "musiclrccontainerforwallpaper.h"
 #include "musicvideoplaywidget.h"
-#include "musicdownloadstatuslabel.h"
+#include "musicdownloadstatusobject.h"
 #include "musicsettingwidget.h"
 #include "musicmessagebox.h"
 #include "musicalbumfoundwidget.h"
 #include "musicartistfoundwidget.h"
 #include "musicsimilarfoundwidget.h"
+#include "musicplaylistfoundwidget.h"
 #include "musicsongsearchonlinewidget.h"
 #include "musicidentifysongswidget.h"
 #include "musicfunctionuiobject.h"
@@ -28,8 +30,9 @@ MusicRightAreaWidget::MusicRightAreaWidget(QWidget *parent)
     m_instance = this;
     m_stackedFuncWidget = nullptr;
     m_musicLrcForDesktop = nullptr;
+    m_musicLrcForWallpaper = nullptr;
 
-    m_downloadStatusLabel = new MusicDownloadStatusLabel(parent);
+    m_downloadStatusLabel = new MusicDownloadStatusObject(parent);
     m_setting = new MusicSettingWidget(this);
     connect(m_setting, SIGNAL(parameterSettingChanged()), parent,
                        SLOT(getParameterSetting()));
@@ -40,6 +43,7 @@ MusicRightAreaWidget::~MusicRightAreaWidget()
     delete m_setting;
     delete m_downloadStatusLabel;
     delete m_musicLrcForDesktop;
+    delete m_musicLrcForWallpaper;
 }
 
 QString MusicRightAreaWidget::getClassName()
@@ -95,6 +99,10 @@ void MusicRightAreaWidget::stopLrcMask() const
     {
        m_ui->musiclrccontainerforinline->stopLrcMask();
        m_musicLrcForDesktop->stopLrcMask();
+       if(m_musicLrcForWallpaper)
+       {
+           m_musicLrcForWallpaper->stopLrcMask();
+       }
     }
 }
 
@@ -104,6 +112,10 @@ void MusicRightAreaWidget::startTimerClock() const
     {
        m_ui->musiclrccontainerforinline->startTimerClock();
        m_musicLrcForDesktop->startTimerClock();
+       if(m_musicLrcForWallpaper)
+       {
+           m_musicLrcForWallpaper->startTimerClock();
+       }
     }
 }
 
@@ -131,6 +143,10 @@ void MusicRightAreaWidget::setSettingParameter() const
 {
     m_musicLrcForDesktop->setSettingParameter();
     m_ui->musiclrccontainerforinline->setSettingParameter();
+    if(m_musicLrcForWallpaper)
+    {
+        m_musicLrcForWallpaper->setSettingParameter();
+    }
 }
 
 bool MusicRightAreaWidget::checkSettingParameterValue() const
@@ -155,6 +171,10 @@ void MusicRightAreaWidget::updateCurrentLrc(qint64 current, qint64 total, bool p
             }
             m_musicLrcForDesktop->setCurrentTime(intervalTime, total);
             m_musicLrcForDesktop->updateCurrentLrc(currentLrc, laterLrc, intervalTime);
+            if(m_musicLrcForWallpaper)
+            {
+                m_musicLrcForWallpaper->updateCurrentLrc(intervalTime);
+            }
         }
     }
 }
@@ -165,9 +185,13 @@ void MusicRightAreaWidget::loadCurrentSongLrc(const QString &name, const QString
     {
         m_ui->musiclrccontainerforinline->stopLrcMask();
         m_ui->musiclrccontainerforinline->setCurrentSongName( name );
-
         m_musicLrcForDesktop->stopLrcMask();
         m_musicLrcForDesktop->setCurrentSongName( name );
+        if(m_musicLrcForWallpaper)
+        {
+            m_musicLrcForWallpaper->stopLrcMask();
+            m_musicLrcForWallpaper->setCurrentSongName( name );
+        }
 
         if(!m_ui->musiclrccontainerforinline->transLyricFileToTime( path ))
         {
@@ -192,6 +216,33 @@ void MusicRightAreaWidget::showSettingWidget() const
     m_setting->exec();
 }
 
+void MusicRightAreaWidget::resizeWindow()
+{
+    m_ui->songSearchWidget->resizeWindow();
+    m_ui->musiclrccontainerforinline->resizeWindow();
+
+    if(MObject_cast(MusicSimilarFoundWidget*, m_stackedFuncWidget))
+    {
+        MObject_cast(MusicSimilarFoundWidget*, m_stackedFuncWidget)->resizeWindow();
+    }
+    else if(MObject_cast(MusicAlbumFoundWidget*, m_stackedFuncWidget))
+    {
+        MObject_cast(MusicAlbumFoundWidget*, m_stackedFuncWidget)->resizeWindow();
+    }
+    else if(MObject_cast(MusicArtistFoundWidget*, m_stackedFuncWidget))
+    {
+        MObject_cast(MusicArtistFoundWidget*, m_stackedFuncWidget)->resizeWindow();
+    }
+    else if(MObject_cast(MusicPlaylistFoundWidget*, m_stackedFuncWidget))
+    {
+        MObject_cast(MusicPlaylistFoundWidget*, m_stackedFuncWidget)->resizeWindow();
+    }
+    else if(MObject_cast(MusicVideoPlayWidget*, m_stackedFuncWidget))
+    {
+        MObject_cast(MusicVideoPlayWidget*, m_stackedFuncWidget)->resizeWindow();
+    }
+}
+
 void MusicRightAreaWidget::getParameterSetting() const
 {
     setSettingParameter();
@@ -204,6 +255,11 @@ void MusicRightAreaWidget::getParameterSetting() const
 
 void MusicRightAreaWidget::musicFunctionClicked(int index)
 {
+    if(M_SETTING_PTR->value(MusicSettingManager::WindowConciseChoiced).toBool())
+    {
+        MusicApplication::instance()->musicWindowConciseChanged();
+    }
+
     MusicFunction key = MStatic_cast(MusicFunction, index);
     if(key == LrcWidget) ///lrc option
     {
@@ -223,6 +279,7 @@ void MusicRightAreaWidget::musicFunctionClicked(int index)
     }
 
     deleteStackedFuncWidget();
+    m_ui->songSearchWidget->auditionStop();
     m_ui->lrcDisplayAllButton->setVisible(false);
     if(m_ui->musiclrccontainerforinline->lrcDisplayExpand())
     {
@@ -298,19 +355,25 @@ void MusicRightAreaWidget::musicFunctionClicked(int index)
         case SearchWidget: //insert search display widget
             {
                 QString searchedQString = m_ui->musicSongSearchLine->text().trimmed();
-                m_ui->surfaceStackedWidget->setCurrentIndex(0);
-                emit updateBackgroundTheme();
+                searchedQString = searchedQString.isEmpty() ? m_ui->musicSongSearchLine->placeholderText() : searchedQString;
                 //The string searched wouldn't allow to be none
-                if( !searchedQString.isEmpty() && searchedQString != tr("please input search text") )
+                if(!searchedQString.isEmpty() && searchedQString != tr("please input search text"))
                 {
+                    m_ui->musicSongSearchLine->setText(searchedQString);
                     m_ui->songSearchWidget->startSearchQuery(searchedQString);
                 }
                 else
                 {
+                    musicFunctionClicked(MusicRightAreaWidget::KugGouSongWidget);
+
                     MusicMessageBox message;
                     message.setText(tr("enter input search text first"));
                     message.exec();
+                    break;
                 }
+
+                m_ui->surfaceStackedWidget->setCurrentIndex(0);
+                emit updateBackgroundTheme();
                 break;
             }
         case SimilarWidget: //insert similar found widget
@@ -340,6 +403,15 @@ void MusicRightAreaWidget::musicFunctionClicked(int index)
                 emit updateBackgroundTheme();
                 break;
             }
+        case PlaylistWidget: //insert playlist found widget
+            {
+                MusicPlaylistFoundWidget *playlistFoundWidget = new MusicPlaylistFoundWidget(this);
+                m_ui->surfaceStackedWidget->addWidget(playlistFoundWidget);
+                m_ui->surfaceStackedWidget->setCurrentWidget(playlistFoundWidget);
+                m_stackedFuncWidget = playlistFoundWidget;
+                emit updateBackgroundTheme();
+                break;
+            }
         case IndentifyWidget: //insert indentify songs widget
             {
                 MusicIdentifySongsWidget *songsIdentifyWidget = new MusicIdentifySongsWidget(this);
@@ -366,10 +438,15 @@ void MusicRightAreaWidget::musicFunctionClicked(int index)
 
 void MusicRightAreaWidget::musicSongCommentsWidget()
 {
+    if(M_SETTING_PTR->value(MusicSettingManager::WindowConciseChoiced).toBool())
+    {
+        MusicApplication::instance()->musicWindowConciseChanged();
+    }
     if(m_ui->surfaceStackedWidget->currentIndex() != 1)
     {
-        musicFunctionClicked(LrcWidget);
+        musicFunctionClicked(MusicRightAreaWidget::LrcWidget);
     }
+
     m_ui->musiclrccontainerforinline->showSongCommentsWidget();
 }
 
@@ -389,6 +466,12 @@ void MusicRightAreaWidget::musicArtistFound(const QString &text)
 {
     musicFunctionClicked(MusicRightAreaWidget::ArtistWidget);
     MStatic_cast(MusicArtistFoundWidget*, m_stackedFuncWidget)->setSongName(text);
+}
+
+void MusicRightAreaWidget::musicPlaylistFound()
+{
+    musicFunctionClicked(MusicRightAreaWidget::PlaylistWidget);
+    MStatic_cast(MusicPlaylistFoundWidget*, m_stackedFuncWidget)->setSongName(QString());
 }
 
 void MusicRightAreaWidget::musicLoadSongIndexWidget()
@@ -419,6 +502,7 @@ void MusicRightAreaWidget::setWindowLrcTypeChanged()
 {
     bool type = m_musicLrcForDesktop ? m_musicLrcForDesktop->getWindowType() :
                 MStatic_cast(bool, M_SETTING_PTR->value(MusicSettingManager::DLrcWindowTypeChoiced).toInt());
+    M_SETTING_PTR->setValue(MusicSettingManager::DLrcGeometryChoiced, QPoint());
 
     MusicLrcContainerForDesktop *deskLrc = m_musicLrcForDesktop;
     if(type)
@@ -446,8 +530,6 @@ void MusicRightAreaWidget::setWindowLrcTypeChanged()
                  SLOT(musicSetting()));
     connect(m_musicLrcForDesktop, SIGNAL(changeCurrentLrcColorCustom()), m_setting,
                  SLOT(changeDesktopLrcWidget()));
-    connect(m_musicLrcForDesktop, SIGNAL(desktopLrcClosed()), SIGNAL(desktopLrcClosed()));
-    connect(m_musicLrcForDesktop, SIGNAL(setWindowLockedChanged(bool)), SIGNAL(lockDesktopLrc(bool)));
 
     M_SETTING_PTR->setValue(MusicSettingManager::DLrcWindowTypeChoiced, type);
     deskLrc->deleteLater();
@@ -461,7 +543,13 @@ void MusicRightAreaWidget::songResearchButtonSearched(const QString &name)
 
 void MusicRightAreaWidget::researchQueryByQuality(const QString &quality)
 {
-    m_ui->songSearchWidget->researchQueryByQuality(m_ui->showCurrentSong->text().trimmed(), quality);
+    QString text = m_ui->showCurrentSong->text().trimmed();
+    if(text.isEmpty())
+    {
+        return;
+    }
+
+    m_ui->songSearchWidget->researchQueryByQuality(text, quality);
     m_ui->surfaceStackedWidget->setCurrentIndex(0);
     emit updateBackgroundTheme();
 }
@@ -547,4 +635,22 @@ void MusicRightAreaWidget::musicLrcDisplayAllButtonClicked()
     m_ui->lrcDisplayAllButton->setStyleSheet(lrcDisplayAll ? MusicUIObject::MKGTinyBtnLrcExpand :
                                                              MusicUIObject::MKGTinyBtnLrcCollapse);
     m_ui->musicWindowConcise->setEnabled(!lrcDisplayAll);
+}
+
+void MusicRightAreaWidget::musicContainerForWallpaperClicked()
+{
+    if(m_musicLrcForWallpaper)
+    {
+        delete m_musicLrcForWallpaper;
+        m_musicLrcForWallpaper = nullptr;
+    }
+    else
+    {
+        m_musicLrcForWallpaper = new MusicLrcContainerForWallpaper;
+        m_musicLrcForWallpaper->setLrcAnalysisModel(m_ui->musiclrccontainerforinline->getLrcAnalysisModel());
+        m_musicLrcForWallpaper->setSettingParameter();
+        m_musicLrcForWallpaper->showFullScreen();
+        connect(m_ui->musiclrccontainerforinline, SIGNAL(linearGradientColorChanged()), m_musicLrcForWallpaper,
+                                                  SLOT(changeCurrentLrcColor()));
+    }
 }

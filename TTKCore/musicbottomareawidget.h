@@ -3,7 +3,7 @@
 
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
@@ -104,16 +104,6 @@ public:
     void resizeWindow();
     /*!
      * Resize window bound by widgte resize called.
-     */
-
-Q_SIGNALS:
-    void setShowDesktopLrc(bool show);
-    /*!
-     * Set show desktop lrc state changed emit.
-     */
-    void setWindowLockedChanged();
-    /*!
-     * Lock current desktop lrc state changed.
      */
 
 public Q_SLOTS:

@@ -1,6 +1,6 @@
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
@@ -20,7 +20,7 @@ Rectangle {
     property alias source: image.foreground
     property alias subSource: subImage.source
 
-    signal imageButtonPressed
+    signal imageButtonClicked
 
     RowLayout {
         spacing: 2
@@ -36,7 +36,7 @@ Rectangle {
                 leftMargin: ttkGlobal.dpHeight(10)
             }
             color: ttkTheme.color_alpha_lv0
-            foreground: "qrc:/image/test"
+            foreground: "qrc:/image/default_background"
             background: "qrc:/image/radius_mask"
         }
 
@@ -60,8 +60,15 @@ Rectangle {
             width: ttkGlobal.dpWidth(50)
             height: ttkGlobal.dpHeight(50)
             anchors.right: parent.right
-            onPressed: {
-                ttkImageFunctionItem.imageButtonPressed();
+            onClicked: {
+                ttkImageFunctionItem.imageButtonClicked();
+            }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            onClicked: {
+                ttkImageFunctionItem.imageButtonClicked();
             }
         }
     }

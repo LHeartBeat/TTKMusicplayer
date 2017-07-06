@@ -42,9 +42,13 @@ Oschina: **<u>http://git.oschina.net/greedysky/Musicplayer</u>**
 
 Qmmp Player You Can See Here: **<u>http://qmmp.ylsoftware.com</u>**
 
+Qmmp Source You Can See Here: **<u>https://github.com/Greedysky/qmmp</u>**
+
 Qmmp Core Library URL: **<u>http://pan.baidu.com/s/1bv4iSY</u>**
 
 Executable Download URL: **<u>http://download.csdn.net/album/detail/3094</u>**
+
+Executable Download URL(extra): **<u>http://pan.baidu.com/s/1kVOHN0b</u>**
 
 KuGou Resource Download URL: **<u>https://github.com/Greedysky/KugouResource</u>**
 
@@ -84,7 +88,8 @@ Screenshots.
  * Support converting different music formats, and can change the sound as like Tom Cat, also can enhance the sound.
  * Local music transferred to the cloud or mobile device.
  * Local music and the human voice humming recognition.
-
+ * Music song, artist, album and playlist supported.
+ 
 Mobile
 ----
 *Follow the QQ music UI to achieve most of the features.*
@@ -132,7 +137,7 @@ Screenshots
 Copyright
 -------
  * This file is part of the TTK Music Player project.
- * Copyright (c) 2014 - 2016 Greedysky Studio.
+ * Copyright (c) 2015 - 2017 Greedysky Studio.
  * All rights reserved!
  * Redistribution and use of the source code or any derivative.
  * works are strictly forbiden.

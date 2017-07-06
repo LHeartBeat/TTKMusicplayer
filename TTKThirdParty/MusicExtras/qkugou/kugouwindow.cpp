@@ -87,6 +87,8 @@ void KugouWindow::setUrl(const QString &url)
     {
         w->setUrl(url);
     }
+#else
+    Q_UNUSED(url);
 #endif
 }
 
@@ -118,6 +120,8 @@ void KugouWindow::kugouSongIndexChanged(int index)
     }
 #ifdef MUSIC_WEBKIT
     MStatic_cast(QWebView*, d->m_webView)->setUrl(QUrl( url ));
+#else
+    Q_UNUSED(d);
 #endif
 }
 
@@ -135,6 +139,8 @@ void KugouWindow::kugouRadioIndexChanged(int index)
     }
 #ifdef MUSIC_WEBKIT
     MStatic_cast(QWebView*, d->m_webView)->setUrl(QUrl( url ));
+#else
+    Q_UNUSED(d);
 #endif
 }
 
@@ -148,10 +154,11 @@ void KugouWindow::kugouMVIndexChanged(int index)
         case 0: url = KugouUrl::getMVRadioUrl(); break;
         case 1: url = KugouUrl::getMVRecommendUrl(); break;
         case 2: url = KugouUrl::getMVFanxingUrl(); break;
-        case 3: url = KugouUrl::getMVStarMusicUrl(); break;
     }
 #ifdef MUSIC_WEBKIT
     MStatic_cast(QWebView*, d->m_webView)->setUrl(QUrl( url ));
+#else
+    Q_UNUSED(d);
 #endif
 }
 
@@ -208,7 +215,9 @@ void KugouWindow::createKugouSongWidget()
 
     kugouSongIndexChanged(0);
 #else
+    Q_UNUSED(d);
     QLabel *pix = new QLabel(this);
+    pix->setScaledContents(true);
     pix->setPixmap(QPixmap(":/image/lb_no_webkit_song"));
     layout->addWidget(pix);
 #endif
@@ -260,7 +269,9 @@ void KugouWindow::createKugouRadioWidget()
 
     kugouRadioIndexChanged(0);
 #else
+    Q_UNUSED(d);
     QLabel *pix = new QLabel(this);
+    pix->setScaledContents(true);
     pix->setPixmap(QPixmap(":/image/lb_no_webkit_radio"));
     layout->addWidget(pix);
 #endif
@@ -280,7 +291,9 @@ void KugouWindow::createKugouListWidget()
     view->setUrl(QUrl( KugouUrl::getListUrl() ));
     layout->addWidget(d->m_webView = view);
 #else
+    Q_UNUSED(d);
     QLabel *pix = new QLabel(this);
+    pix->setScaledContents(true);
     pix->setPixmap(QPixmap(":/image/lb_no_webkit_list"));
     layout->addWidget(pix);
 #endif
@@ -311,16 +324,12 @@ void KugouWindow::createKugouMVWidget()
     bt = new QPushButton(tr(" MVFanxing "), d->m_topWidget);
     bt->setCursor(QCursor(Qt::PointingHandCursor));
     d->m_buttonGroup->addButton(bt, 2);
-    bt = new QPushButton(tr(" MVStarMusic "), d->m_topWidget);
-    bt->setCursor(QCursor(Qt::PointingHandCursor));
-    d->m_buttonGroup->addButton(bt, 3);
     connect(d->m_buttonGroup, SIGNAL(buttonClicked(int)), SLOT(kugouMVIndexChanged(int)));
 
     topLayout->addStretch(1);
     topLayout->addWidget(d->m_buttonGroup->button(0));
     topLayout->addWidget(d->m_buttonGroup->button(1));
     topLayout->addWidget(d->m_buttonGroup->button(2));
-    topLayout->addWidget(d->m_buttonGroup->button(3));
     topLayout->addStretch(1);
 
     QWebView *view = new QWebView(this);
@@ -332,7 +341,9 @@ void KugouWindow::createKugouMVWidget()
 
     kugouMVIndexChanged(0);
 #else
+    Q_UNUSED(d);
     QLabel *pix = new QLabel(this);
+    pix->setScaledContents(true);
     pix->setPixmap(QPixmap(":/image/lb_no_webkit_mv"));
     layout->addWidget(pix);
 #endif
@@ -351,7 +362,9 @@ void KugouWindow::createKugouSingleWidget()
     view->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
     layout->addWidget(d->m_webView = view);
 #else
+    Q_UNUSED(d);
     QLabel *pix = new QLabel(this);
+    pix->setScaledContents(true);
     pix->setStyleSheet("background:white;");
     layout->addWidget(pix);
 #endif

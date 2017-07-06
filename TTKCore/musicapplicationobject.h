@@ -3,20 +3,18 @@
 
 /* =================================================
  * This file is part of the TTK Music Player project
- * Copyright (c) 2014 - 2016 Greedysky Studio
+ * Copyright (c) 2015 - 2017 Greedysky Studio
  * All rights reserved!
  * Redistribution and use of the source code or any derivative
  * works are strictly forbiden.
    =================================================*/
 
-#include <QMimeData>
-#include <QFileDialog>
 #include "musicobject.h"
 #include "musicglobaldefine.h"
 
+class QDeviceWatcher;
 class MusicTimerAutoObject;
 class MusicMobileDevicesWidget;
-class MusicMobileDevicesThread;
 class QPropertyAnimation;
 
 /*! @brief The class of the app object widget.
@@ -106,9 +104,13 @@ public Q_SLOTS:
     /*!
      * Timer parameter changed.
      */
-    void musicDevicesLinuxChanged(bool state);
+    void musicDeviceNameChanged(const QString &name);
     /*!
-     * Detect mobile devices on linux.
+     * Detect mobile devices name changed.
+     */
+    void musicDeviceChanged(bool state);
+    /*!
+     * Detect mobile devices changed.
      */
     void musicSetEqualizer();
     /*!
@@ -117,6 +119,10 @@ public Q_SLOTS:
     void musicSetSoundEffect();
     /*!
      * Show set sound effect widget.
+     */
+    void musicBackgroundSliderStateChanged();
+    /*!
+     * Current slider state changed.
      */
 
 protected:
@@ -129,7 +135,7 @@ protected:
     QPropertyAnimation *m_animation;
     MusicTimerAutoObject *m_musicTimerAutoObj;
     MusicMobileDevicesWidget *m_mobileDevices;
-    MusicMobileDevicesThread *m_mobileDevicesLinux;
+    QDeviceWatcher *m_deviceWatcher;
 
     static MusicApplicationObject *m_instance;
 };

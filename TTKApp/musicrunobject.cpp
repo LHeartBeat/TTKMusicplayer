@@ -15,23 +15,25 @@
 #define S_BACKGROUND_DIR_FULL     S_DOWNLOADS_DIR_FULL + BACKGROUND_DIR
 
 #define S_COFIGPATH_FULL          S_APPDATA_DIR_FULL + COFIGPATH
-#define S_NETDADIOPATH_FULL       S_APPDATA_DIR_FULL + NETDADIOPATH
 #define S_MUSICPATH_FULL          S_APPDATA_DIR_FULL + MUSICPATH
-#define S_DOWNLOADINFO_FULL       S_APPDATA_DIR_FULL + DOWNLOADINFO
+#define S_NORMALDOWNPATH_FULL     S_APPDATA_DIR_FULL + NORMALDOWNPATH
+#define S_CLOUDDOWNPATH_FULL      S_APPDATA_DIR_FULL + CLOUDDOWNPATH
 #define S_MUSICSEARCH_FULL        S_APPDATA_DIR_FULL + MUSICSEARCH
 #define S_DARABASEPATH_FULL       S_APPDATA_DIR_FULL + DARABASEPATH
 #define S_USERPATH_FULL           S_APPDATA_DIR_FULL + USERPATH
 #define S_BARRAGEPATH_FULL        S_APPDATA_DIR_FULL + BARRAGEPATH
+#define S_AVATAR_DIR_FULL         S_APPDATA_DIR_FULL + AVATAR_DIR
+#define S_USER_THEME_DIR_FULL     S_APPDATA_DIR_FULL + USER_THEME_DIR
 
 #define S_THEME_DIR_FULL          MusicObject::getAppDir() + TTKMUSIC_VERSION_STR + "/" + THEME_DIR
 #define S_PLUGINS_DIR_FULL        MusicObject::getAppDir() + TTKMUSIC_VERSION_STR + "/" + PLUGINS_DIR
 #define S_LANGUAGE_DIR_FULL       MusicObject::getAppDir() + TTKMUSIC_VERSION_STR + "/" + LANGUAGE_DIR
-#define S_SOUNDPATH_FULL          MusicObject::getAppDir() + TTKMUSIC_VERSION_STR + "/" + SOUNDPATH
 
 #ifdef Q_OS_WIN
 #define S_TTKSERVICE_FULL         MusicObject::getAppDir() + TTKMUSIC_VERSION_STR + "/TTKService.exe"
 #else
-#define S_TTKSERVICE_FULL         MusicObject::getAppDir() + TTKMUSIC_VERSION_STR + "/TTKService"
+#define S_TTKDD_FULL              MusicObject::getAppDir() + TTKMUSIC_VERSION_STR + "/TTKLDD.sh"
+#define S_TTKSERVICE_FULL         MusicObject::getAppDir() + TTKMUSIC_VERSION_STR + "/TTKService.sh"
 #endif
 
 class MusicRunObjectPrivate : public TTKPrivate<MusicRunObject>
@@ -82,6 +84,7 @@ void MusicRunObject::run(int argc, char **argv)
     {
         list << argv[1] << argv[2];
     }
+
     d->m_process->start(S_TTKSERVICE_FULL, list);
 }
 
@@ -104,7 +107,7 @@ void MusicRunObject::dirIsExist(const QString &name)
     QDir dir;
     if(!dir.exists(name))
     {
-        dir.mkdir(name);
+        dir.mkpath(name);
     }
 }
 
@@ -120,6 +123,9 @@ void MusicRunObject::checkTheDirectoryExist()
     dirIsExist(S_ART_DIR_FULL);
     dirIsExist(S_BACKGROUND_DIR_FULL);
 
+    dirIsExist(S_AVATAR_DIR_FULL);
+    dirIsExist(S_USER_THEME_DIR_FULL);
+
     dirIsExist(S_THEME_DIR_FULL);
     dirIsExist(S_PLUGINS_DIR_FULL);
     dirIsExist(S_LANGUAGE_DIR_FULL);
@@ -131,17 +137,17 @@ void MusicRunObject::checkTheFileNeededExist()
     {
         QFile::copy(":/data/musicconfig.xml", S_COFIGPATH_FULL);
     }
-    if(!QFile::exists(S_NETDADIOPATH_FULL))
-    {
-        QFile::copy(":/data/musicradio.dll", S_NETDADIOPATH_FULL);
-    }
     if(!QFile::exists(S_MUSICPATH_FULL))
     {
         QFile::copy(":/data/music.lis", S_MUSICPATH_FULL);
     }
-    if(!QFile::exists(S_DOWNLOADINFO_FULL))
+    if(!QFile::exists(S_NORMALDOWNPATH_FULL))
     {
-        QFile::copy(":/data/musicdown.ttk", S_DOWNLOADINFO_FULL);
+        QFile::copy(":/data/musicdown.ttk", S_NORMALDOWNPATH_FULL);
+    }
+    if(!QFile::exists(S_CLOUDDOWNPATH_FULL))
+    {
+        QFile::copy(":/data/musicdown.ttk", S_CLOUDDOWNPATH_FULL);
     }
     if(!QFile::exists(S_MUSICSEARCH_FULL))
     {
@@ -159,8 +165,18 @@ void MusicRunObject::checkTheFileNeededExist()
     {
         QFile::copy(":/data/musicbarrage.ttk", S_BARRAGEPATH_FULL);
     }
-    if(!QFile::exists(S_SOUNDPATH_FULL))
+
+#ifdef Q_OS_UNIX
+    if(!QFile::exists(S_TTKDD_FULL))
     {
-        QFile::copy(":/data/sound.wav", S_SOUNDPATH_FULL);
+        QFile::copy(":/data/TTKLDD.sh", S_TTKDD_FULL);
+        QProcess::execute("chmod", QStringList() << "+x" << S_TTKDD_FULL);
     }
+    if(!QFile::exists(S_TTKSERVICE_FULL))
+    {
+        QFile::copy(":/data/TTKService.sh", S_TTKSERVICE_FULL);
+        QProcess::execute("chmod", QStringList() << "+x" << S_TTKSERVICE_FULL);
+    }
+ #endif
+
 }

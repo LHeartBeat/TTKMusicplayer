@@ -1,60 +1,41 @@
 #include "musicapplication.h"
-#include "musiccoreutils.h"
-#include "musicxmlconfigmanager.h"
-#include "musicsettingmanager.h"
-#include "musicnetworkthread.h"
+#include "musicruntimemanager.h"
+#include "musicnumberdefine.h"
+#include "ttkdumper.h"
 
-#include <QApplication>
+#include <QTimer>
 #include <QTranslator>
+#include <QApplication>
 
-#define TTK_DEBUG
+#define MUSIC_DEBUG
 
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-#if !defined TTK_DEBUG && !defined Q_OS_UNIX
+#if !defined MUSIC_DEBUG && !defined Q_OS_UNIX
     if(argc <= 1 || QString(argv[1]) != APPNAME)
     {
         return -1;
     }
 #endif
     ///////////////////////////////////////////////////////
-#ifndef MUSIC_GREATER_NEW
-    MusicUtils::Core::setLocalCodec();
-#endif
-    ///////////////////////////////////////////////////////
-#ifdef Q_OS_UNIX
-    QFont font;
-    font.setPixelSize(13);
-    qApp->setFont(font);
-#endif
-    ///////////////////////////////////////////////////////
-    M_LOGGER_INFO("MusicApplication Begin");
-    QCoreApplication::setOrganizationName("TTKMusicPlayer");
-    QCoreApplication::setOrganizationDomain("TTKMusicPlayer.com");
-    QCoreApplication::setApplicationName("TTKMusicPlayer");
+    QCoreApplication::setOrganizationName(APPNAME);
+    QCoreApplication::setOrganizationDomain(APPCOME);
+    QCoreApplication::setApplicationName(APPNAME);
 
-    //detect the current network state
-    M_NETWORK_PTR->start();
+    TTKDumper dumper;
+    dumper.run();
 
-    M_LOGGER_INFO("Load Translation");
-    MusicXMLConfigManager *xml = new MusicXMLConfigManager;
-    xml->readXMLConfig();
-    xml->readOtherLoadConfig();
+    MusicRunTimeManager manager;
+    manager.run();
 
     QTranslator translator;
-    translator.load(MusicUtils::Core::getLanguageName(xml->readLanguageIndex()));
+    translator.load(manager.translator());
     a.installTranslator(&translator);
-
-    MusicUtils::Core::checkCacheSize(xml->readDownloadCacheSize()*MH_MB2B,
-                                     xml->readDownloadCacheLimit(),
-    M_SETTING_PTR->value(MusicSettingManager::DownloadMusicPathDirChoiced).toString());
-    M_NETWORK_PTR->setBlockNetWork(xml->readCloseNetworkConfig());
-    delete xml;
-    M_LOGGER_INFO("End load translation");
 
     MusicApplication w;
     w.show();
+    ///////////////////////////////////////////////////////
 
     if(argc == 4)
     {

@@ -1,11 +1,11 @@
 # TTKMusicPlayer
 ![QtCreator](https://img.shields.io/badge/Coded%20with-QtCreator%20IDE-blue.svg?style=flat-square)
-![License](https://img.shields.io/badge/license-GPL%20V2-yellowgreen.svg?style=flat-square)
+![License](https://img.shields.io/badge/license-GPL%20V3-yellowgreen.svg?style=flat-square)
 ![TTKMusicplayer](https://img.shields.io/badge/Greedysky-TTKMusicPlayer-green.svg?style=flat-square)
 
 ![LOGO](https://github.com/Greedysky/Resource/blob/master/Screen/logo_pic.png?raw=true)
 
-### **|[About](https://github.com/Greedysky/TTKMusicplayer#usage)|[License](https://github.com/Greedysky/TTKMusicplayer#license)|[Download](https://github.com/Greedysky/TTKMusicplayer#download)|[Features](https://github.com/Greedysky/TTKMusicplayer#features)|[Mobile](https://github.com/Greedysky/TTKMusicplayer#mobile)|[Screenshots](https://github.com/Greedysky/TTKMusicplayer#screenshots)|[Copyright](https://github.com/Greedysky/TTKMusicplayer#copyright)|[Contribute](https://github.com/Greedysky/TTKMusicplayer#how-to-contribute)|**
+### **|[About](https://github.com/Greedysky/TTKMusicplayer#usage)|[License](https://github.com/Greedysky/TTKMusicplayer#license)|[Download](https://github.com/Greedysky/TTKMusicplayer#download)|[Features](https://github.com/Greedysky/TTKMusicplayer#features)|[Screenshots](https://github.com/Greedysky/TTKMusicplayer#screenshots)|[Copyright](https://github.com/Greedysky/TTKMusicplayer#copyright)|[Contribute](https://github.com/Greedysky/TTKMusicplayer#how-to-contribute)|**
 
 Usage
 ----
@@ -13,26 +13,31 @@ Usage
 Compiler tutorial I have written in the wiki.(See here <u>https://github.com/Greedysky/TTKMusicplayer/wiki</u> )**
 
 ### Attention: This software is only for learning and communication, the songs' and playlists' copyright belongs to each music platform.
+### 本项目代码不用于商用，仅限研究和学习使用，资源版权归个平台音乐所有。
  
 ## CI Status
  * Qt develop version be tested on Qt4.8.7 for windows-mingw 32bit
- * Qt develop version be tested on Qt4.8.6 for ubuntu-linux-gcc 64bit
+ * Qt develop version be tested on Qt4.8.7 for ubuntu-linux-gcc 64bit
  * Qt develop version be tested on Qt5.x for windows-mingw 32bit
- * Qt develop version be tested on Qt5.5 for ubuntu-linux-gcc 64bit
- * Qt develop version be tested on Qt5.5 for android 32bit
+ * Qt develop version be tested on Qt5.x for ubuntu-linux-gcc 64bit
+ * Qt develop version be tested on Qt5.x for windows-msvc
  
 | Platform | Qt & Compiler       | Status                                                                                      |
 | :---:    | :---:               | :---:                                                                                       |
-| Linux    | 4.8.6 GCC & 5.5 GCC    | ![Linux](https://img.shields.io/wercker/ci/wercker/docs.svg)                            |
-| Windows  | 4.8.7 GCC & 5.X GCC       | ![Windows](https://img.shields.io/wercker/ci/wercker/docs.svg) |
+| Linux    | 4.8.7 GCC & 5.x GCC    | ![Linux](https://img.shields.io/wercker/ci/wercker/docs.svg)                            |
+| Windows  | 4.8.7 GCC & 5.x GCC       | ![Windows](https://img.shields.io/wercker/ci/wercker/docs.svg) |
+| Windows  | 5.x MSVC       | ![Windows](https://img.shields.io/wercker/ci/wercker/docs.svg) |
 | OS X     | 5.x Clang     | ![OSX](https://img.shields.io/badge/build-unknown-lightgrey.svg?style=flat-square)                           |
-| Android     | 5.5 & 5.5.1     | ![Android](https://img.shields.io/wercker/ci/wercker/docs.svg)                          |
  
 # For Developers
 
 License
 ---
-TTKMusicPlayer is free software licensed under the term of [Licence GPL v2](https://github.com/Greedysky/TTKMusicplayer/blob/master/LICENSE). If you use TTKMusicPlayer or its constituent libraries, you must adhere to the terms of the license in question.
+TTKMusicPlayer is free software licensed under the term of [Licence GPL v3](https://github.com/Greedysky/TTKMusicplayer/blob/master/LICENSE). If you use TTKMusicPlayer or its constituent libraries, you must add here to the terms of the license in question.
+
+API Document
+---
+You Can See Here: **<u>https://greedysky.github.io/ttkdocs/html/index.html</u>**
 
 Download
 ---
@@ -42,13 +47,17 @@ Oschina: **<u>http://git.oschina.net/greedysky/Musicplayer</u>**
 
 Qmmp Player You Can See Here: **<u>http://qmmp.ylsoftware.com</u>**
 
-Qmmp Source You Can See Here: **<u>https://github.com/Greedysky/qmmp</u>**
+Qmmp Source You Can See Here: **<u>https://github.com/Greedysky/TTKMusicplayer/tree/plugins</u>**
+
+Qmmp Source You Can See Here(extra): **<u>https://github.com/Greedysky/qmmp</u>**
 
 Qmmp Core Library URL: **<u>http://pan.baidu.com/s/1bv4iSY</u>**
 
 Executable Download URL: **<u>http://download.csdn.net/album/detail/3094</u>**
 
 Executable Download URL(extra): **<u>http://pan.baidu.com/s/1kVOHN0b</u>**
+
+Skin Download URL: **<u>http://pan.baidu.com/s/1mh7AeG4</u>**
 
 KuGou Resource Download URL: **<u>https://github.com/Greedysky/KugouResource</u>**
 
@@ -73,6 +82,7 @@ TTKMusicPlayer can meet your most demands
  * ModPlug File(*.mod *.s3m *.xm *.it *.669 *.amf *.ams *.dbm *.dmf *.dsm *.far,mdl *.med *.mtm 
                 *.okt *.ptm *.stm *.ult *.umx *.mt2 *.psm *.mdz *.s3z *.xmz *.itz *.mdr *.s3r
                 *.xmr *.itr *.dgz *.s3gz *.xmgz *.itgz)
+ * Playlist formats(ttklis, m3u, m3u8, pls, wpl, xspf)
  * Junior fans interface. Interface cool, gorgeous pop. Maintaining a perfect performance under Vista and XP, refreshing
 Screenshots.
  * Search and high-speed downloads. Song search accuracy optimization, intelligent save bandwidth, you can disable the network function, 8 source download speed.
@@ -88,19 +98,9 @@ Screenshots.
  * Support converting different music formats, and can change the sound as like Tom Cat, also can enhance the sound.
  * Local music transferred to the cloud or mobile device.
  * Local music and the human voice humming recognition.
- * Music song, artist, album and playlist supported.
+ * Music song, artist, album and playlist searcg supported.
+ * Music song spectrum and test supported.
  
-Mobile
-----
-*Follow the QQ music UI to achieve most of the features.*
-
-![0](https://github.com/Greedysky/Resource/blob/master/Screen/TTKMobile/0.png?raw=true)
-![1](https://github.com/Greedysky/Resource/blob/master/Screen/TTKMobile/1.png?raw=true)
-![2](https://github.com/Greedysky/Resource/blob/master/Screen/TTKMobile/2.png?raw=true)
-![3](https://github.com/Greedysky/Resource/blob/master/Screen/TTKMobile/3.png?raw=true)
-![4](https://github.com/Greedysky/Resource/blob/master/Screen/TTKMobile/4.png?raw=true)
-![5](https://github.com/Greedysky/Resource/blob/master/Screen/TTKMobile/5.png?raw=true)
-![6](https://github.com/Greedysky/Resource/blob/master/Screen/TTKMobile/6.png?raw=true)
 
 Screenshots
 ----
@@ -134,14 +134,14 @@ Screenshots
 ### Other Tools
 ![Other Tools](https://github.com/Greedysky/Resource/blob/master/Screen/10.jpg?raw=true)
 
+### Spectrum
+![Magic Music](https://github.com/Greedysky/Resource/blob/master/Screen/11.jpg?raw=true)
+
 Copyright
 -------
  * This file is part of the TTK Music Player project.
  * Copyright (c) 2015 - 2017 Greedysky Studio.
- * All rights reserved!
- * Redistribution and use of the source code or any derivative.
- * works are strictly forbiden.
- * mail: greedysky@163.com.
+ * Mail: greedysky@163.com.
  
 How To Contribute
 -------
